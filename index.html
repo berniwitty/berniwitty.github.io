@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>个人简历</title>
+<style>
+  :root{
+    color-scheme:light;
+    --paper:#ffffff;
+    --ink:#1a1a1a;
+    --dim:#6a6a6a;
+    --line:#d9d9d9;
+    --rule:#1a1a1a;
+    --chrome:#f0f0f0;
+    --chrome-2:#e3e3e3;
+    --sel:#e8e8e8;
+    --font:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC',system-ui,sans-serif;
+    --mono:'Cascadia Mono','Consolas','SF Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--chrome-2);color:var(--ink);font-family:var(--font);
+       font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased}
+
+  .en{display:none}
+  #page[data-lang="en"] .en{display:inline}
+  #page[data-lang="en"] .zh{display:none}
+  #page:not([data-lang="en"]) .only-en{display:none}
+  #page[data-lang="en"] .only-zh{display:none}
+  #page[data-lang="en"] ul.lz{display:none}
+  #page:not([data-lang="en"]) ul.le{display:none}
+
+  /* ---------- window ---------- */
+  .app{max-width:1160px;margin:0 auto;background:var(--paper);border:1px solid var(--rule);
+       min-height:100vh;display:flex;flex-direction:column}
+  .titlebar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:12px;
+            background:var(--chrome);border-bottom:1px solid var(--rule);padding:0 12px;height:38px}
+  .titlebar .file{flex:1;text-align:center;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .titlebar .sq{width:11px;height:11px;border:1px solid var(--rule)}
+  .lang{display:inline-flex;border:1px solid var(--rule);overflow:hidden;font-size:12.5px}
+  .lang button{all:unset;cursor:pointer;padding:2px 10px;color:var(--dim);line-height:1.6}
+  .lang button[aria-pressed="true"]{background:var(--ink);color:#fff}
+  .lang button:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+
+  .body{display:grid;grid-template-columns:216px minmax(0,1fr);flex:1}
+  .nav{border-right:1px solid var(--rule);background:var(--paper)}
+  .nav-in{position:sticky;top:38px;padding:0 0 20px}
+  .nav-head{background:var(--chrome);border-bottom:1px solid var(--line);padding:3px 12px;
+            font-size:12px;color:var(--dim);letter-spacing:.08em}
+  .nav ul{list-style:none;margin:0;padding:8px 6px}
+  .nav a{display:block;padding:4px 8px;color:var(--ink);text-decoration:none;font-size:13.5px;line-height:1.5}
+  .nav a:hover{background:var(--sel)}
+  .nav a:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+  .nav .sub a{padding-left:20px;color:var(--dim);font-size:13px}
+
+  /* ---------- document ---------- */
+  .doc{padding:32px 44px 64px;max-width:820px;margin:0 auto;width:100%}
+  .hd{border-bottom:2px solid var(--rule);padding-bottom:14px}
+  .hd h1{font-size:27px;line-height:1.2;margin:0 0 8px;font-weight:700;letter-spacing:.02em}
+  .hd p{margin:0;font-size:14px;line-height:1.9}
+  .hd p.status{color:var(--dim)}
+
+  section{margin-top:30px}
+  h2{font-size:15px;font-weight:700;margin:0 0 12px;padding-bottom:4px;
+     border-bottom:1px solid var(--rule);letter-spacing:.06em}
+
+  .entry{margin-bottom:16px}
+  .entry:last-child{margin-bottom:0}
+  .row{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+  .row h3{font-size:15px;font-weight:700;margin:0;line-height:1.5}
+  .row .date{color:var(--dim);font-size:13.5px;white-space:nowrap}
+  .deg{margin:0;font-size:14.5px}
+  .note{margin:0;font-size:14px}
+  .stack{margin:2px 0 6px;font-size:13.5px;color:var(--dim);font-family:var(--mono);line-height:1.7}
+  .intro{margin:0 0 8px;font-size:14.5px}
+  .doc p,.doc li{max-width:46em}
+
+  ul.pts{list-style:none;margin:0;padding:0}
+  ul.pts li{position:relative;padding-left:17px;margin-bottom:7px;font-size:14.5px}
+  ul.pts li:last-child{margin-bottom:0}
+  ul.pts li::before{content:"";position:absolute;left:2px;top:.72em;width:5px;height:5px;background:var(--ink)}
+  ul.pts b{font-weight:700}
+
+  .cstack{margin:8px 0 0}
+  .ptitle{font-size:15px;font-weight:700;margin:0;line-height:1.5}
+  .proj{margin-bottom:22px}
+  .proj:last-child{margin-bottom:0}
+
+  /* ---------- phone ---------- */
+  @media (max-width:820px), (pointer:coarse) and (max-width:1100px){
+    body{background:#efefef}
+    .app{border:0;min-height:0}
+    .titlebar{height:42px;justify-content:flex-end}
+    .titlebar .file,.titlebar .sq{display:none}
+    .body{grid-template-columns:1fr}
+    .nav{display:none}
+    .doc{padding:0 0 26px;max-width:none;background:#efefef}
+    .hd{background:var(--paper);border-bottom:0;padding:20px 16px}
+    .hd h1{font-size:24px}
+    section{margin-top:9px;background:var(--paper);padding:16px 16px 18px}
+    .row{flex-direction:column;gap:0}
+    .row .date{white-space:normal}
+    .stack{font-size:13px}
+  }
+</style>
+
+</head>
+<body>
+<div id="page" data-lang="zh">
+<div class="app">
+
+  <div class="titlebar">
+    <span class="sq" aria-hidden="true"></span>
+    <span class="file"><span class="zh">韩天悦.txt</span><span class="en">TianyueHan.txt</span></span>
+    <div class="lang" role="group" aria-label="语言 / Language">
+      <button type="button" data-set="zh" aria-pressed="true">中文</button>
+      <button type="button" data-set="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+
+  <div class="body">
+    <aside class="nav">
+      <div class="nav-in">
+        <div class="nav-head"><span class="zh">简历</span><span class="en">Resume</span></div>
+        <ul>
+          <li><a href="#edu"><span class="zh">教育背景</span><span class="en">EDUCATION</span></a></li>
+          <li><a href="#proj"><span class="zh">项目经历</span><span class="en">PROJECTS</span></a></li>
+          <li class="sub"><a href="#p1"><span class="zh">面向电商购物的多智能体蒸馏与数据飞轮后训练</span><span class="en">E-Commerce Shopping Agent — Multi-Agent Distillation &amp; Data-Flywheel Post-Training</span></a></li>
+          <li class="sub"><a href="#p2"><span class="zh">基于强化学习与在线蒸馏的数学推理模型后训练</span><span class="en">GRPO vs. On-Policy Distillation — Post-Training a Math-Reasoning LLM at Matched Compute</span></a></li>
+          <li class="sub"><a href="#p3"><span class="zh">面向数学推理的多轮工具调用智能体强化学习训练与评测</span><span class="en">Multi-Turn Tool-Use Agent for Math Reasoning — Agentic RL Training &amp; Evaluation</span></a></li>
+          <li><a href="#comp"><span class="zh">算法竞赛</span><span class="en">COMPETITIONS</span></a></li>
+          <li class="sub"><a href="#c1"><span class="zh">Pacman 多智能体对战系统</span><span class="en">Pacman Multi-Agent Contest</span></a></li>
+          <li class="sub"><a href="#c2"><span class="zh">Flatland 多智能体铁路调度系统</span><span class="en">Flatland Multi-Agent Railway Scheduling</span></a></li>
+          <li><a href="#skill"><span class="zh">技能</span><span class="en">TECHNICAL SKILLS</span></a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="doc">
+      <header class="hd">
+        <h1><span class="zh">韩天悦</span><span class="en">Tianyue Han</span></h1>
+        <p><span class="zh">(+86) 18261907886 微信同号 ✉ berniwitty@outlook.com</span><span class="en">(+86) 18261907886   |   berniwitty@outlook.com</span></p>
+        <p class="status"><span class="zh">2028 届（2027.10 毕业） | 可立刻到岗，每周 5 天线下，可连续实习 6 个月以上</span><span class="en">Expected graduation: Oct 2027   |   Available immediately — on-site 5 days/week, 6+ month internship</span></p>
+      </header>
+
+      <section id="edu">
+        <h2><span class="zh">教育背景</span><span class="en">EDUCATION</span></h2>
+        <div class="entry">
+          <div class="row"><h3><span class="zh">Monash University (QS:31)</span><span class="en">Monash University (QS 31)</span></h3><span class="date"><span class="zh">2027.10 毕业</span><span class="en">Expected Oct 2027</span></span></div>
+          <p class="deg"><span class="zh">人工智能硕士 High Distinction（前 5%）</span><span class="en">Master of Artificial Intelligence — High Distinction (top 5%)</span></p>
+          <p class="note"><span class="zh">硕士论文（在投）：GDPR 框架下基于检索推理与知识蒸馏的 LLM 隐私声明披露审计系统</span><span class="en">Thesis (under review): Advisory Disclosure-Sufficiency Auditing of AI-Vendor Privacy Policies under the GDPR</span></p>
+        </div>
+        <div class="entry">
+          <div class="row"><h3><span class="zh">中国海洋大学 (985)</span><span class="en">Ocean University of China (Project 985)</span></h3><span class="date"><span class="zh"></span><span class="en"></span></span></div>
+          <p class="deg"><span class="zh">计算机科学与技术学士</span><span class="en">B.Eng. in Computer Science and Technology</span></p>
+        </div>
+      </section>
+
+      <section id="proj">
+        <h2><span class="zh">项目经历</span><span class="en">PROJECTS</span></h2>
+        <article class="proj" id="p1">
+          <h3 class="ptitle"><span class="zh">面向电商购物的多智能体蒸馏与数据飞轮后训练</span><span class="en">E-Commerce Shopping Agent — Multi-Agent Distillation &amp; Data-Flywheel Post-Training</span></h3>
+          <p class="stack"><span class="zh">技术栈：LoRA SFT、拒绝采样数据飞轮、教师蒸馏、DPO、GiGPO、LLaMA-Factory、verl-agent、vLLM</span><span class="en">Stack: LoRA SFT, rejection-sampling data flywheel, teacher distillation, DPO, GiGPO, LLaMA-Factory, verl-agent, vLLM</span></p>
+          <p class="intro"><span class="zh">在 ShopSimulator benchmark 上对 Qwen3-8B 做后训练，同一评测下对比 SFT、决策点级 DPO 与多轮强化学习三条路线。任务分单轮与多轮个性化两类，多轮要主动追问才能问出用户没说出口的偏好；买到的商品类目、属性、规格、价格同时正确才计一次成功。</span><span class="en">Post-trained Qwen3-8B on the ShopSimulator benchmark, comparing SFT, decision-level DPO and multi-turn RL under one evaluation. A purchase counts as a success only when category, attribute, specification and price are all correct; multi-turn tasks additionally require asking back to surface unstated preferences.</span></p>
+          <ul class="pts"><li><span class="zh"><b>四角色多智能体教师系统，多轮成功率从 12.0% 提到 27.3%：</b>Qwen3-8B 直接执行任务只有单轮 8.3%、多轮个性化 12.0%；Planner 拆解需求并决定何时追问，Searcher 检索候选，Comparator 逐项比价，Verifier 下单前核对规格，整套系统随后用作产数据的教师。</span><span class="en"><b>Four-role multi-agent teacher, multi-turn success 12.0% to 27.3%: </b>Qwen3-8B alone reaches 8.3% single-turn and 12.0% multi-turn. Planner decomposes the request and decides when to ask back, Searcher retrieves candidates, Comparator compares item by item, Verifier checks the specification before checkout; the system then serves as the teacher that produces data.</span></li>
+<li><span class="zh"><b>拒绝采样数据飞轮，单轮成功率从 8.3% 提到 26.0%：</b>教师在训练任务上反复采样，环境返回的成交结果直接充当标签，只留类目、属性、规格、价格全部买对的轨迹，再丢弃含重复搜索、点击页面上没有的商品、靠系统兜底下单的轨迹，并控制商品类目与场景配比；入选轨迹把四个角色轮流输出的协作过程改写成单个 Qwen3-8B 策略的一条动作序列，做 LoRA SFT。</span><span class="en"><b>Rejection-sampling data flywheel, single-turn success 8.3% to 26.0%: </b>The teacher samples repeatedly on training tasks with the environment's purchase outcome as the label, keeping only trajectories correct on all four attributes and dropping repeated searches, clicks on absent items and system-fallback orders; kept trajectories are rewritten from four-role collaboration into one Qwen3-8B action sequence for LoRA SFT.</span></li>
+<li><span class="zh"><b>重做数据过滤与 LoRA 配置，严格成功率提升 19.5 个点到 45.5%：</b>第二轮飞轮停止涨分后排查数据，步数规则只保留短于中位数的轨迹，最难的任务被整批丢弃；放开后训练样本从 1,197 条增至 3,816 条，LoRA 从只训注意力层改成训全部线性层、秩 64 提到 128，官方单轮测试集 45.5%，同测试集同指标下基准论文的 SFT 为 32.5%、SFT 加 GRPO 38.9%、GPT-5 零样本 40.8%，装回多智能体系统后多轮个性化 41.3%。</span><span class="en"><b>Reworked filtering and LoRA configuration, strict success +19.5 pts to 45.5%: </b>the step-count rule was keeping only shorter-than-median trajectories and discarding the hardest tasks; relaxing it grew training data from 1,197 to 3,816 samples, and LoRA moved from attention-only rank 64 to all linear layers at rank 128. Against the reference paper on the same test set: SFT 32.5%, SFT+GRPO 38.9%, GPT-5 zero-shot 40.8%; 41.3% multi-turn back inside the multi-agent system.</span></li>
+<li><span class="zh"><b>消融归因，数据约 8 个点、容量约 11 个点：</b>同一批数据只把 LoRA 退回注意力层秩 64，成绩回落到 34.1%，两项缺一不可；样本再扩到 4,982 条成绩持平，上限来自单条轨迹 24K token 的上下文，最长的轨迹装不进训练。</span><span class="en"><b>Ablation: about 8 pts from data, 11 pts from capacity: </b>reverting LoRA to attention-only rank 64 on the same data falls back to 34.1%, so neither alone accounts for the gain; expanding to 4,982 samples holds flat — the ceiling is the 24K-token context.</span></li>
+<li><span class="zh"><b>三条后训练路线对比，按每 GPU 小时收益选型：</b>数据触顶后转向偏好学习与强化学习：以同一决策点上不同动作能否成交为判据，构造 4,130 条偏好对训练 DPO，在 verl-agent 上搭出 GiGPO 多轮强化学习管线；GiGPO 单卡每步 110 分钟，同期 SFT 每 GPU 小时约换来 4 个百分点。</span><span class="en"><b>Three post-training routes compared, selected by return per GPU-hour: </b>with data saturated, built 4,130 decision-level preference pairs for DPO and a GiGPO multi-turn RL pipeline on verl-agent; GiGPO cost 110 minutes per step on one GPU, while SFT was still returning about 4 pts per GPU-hour.</span></li></ul>
+        </article>
+        <article class="proj" id="p2">
+          <h3 class="ptitle"><span class="zh">基于强化学习与在线蒸馏的数学推理模型后训练</span><span class="en">GRPO vs. On-Policy Distillation — Post-Training a Math-Reasoning LLM at Matched Compute</span></h3>
+          <p class="stack"><span class="zh">技术栈：RLVR、GRPO、OPD、Reverse KL、verl、vLLM、FSDP、Ray、PyTorch</span><span class="en">Stack: RLVR, GRPO, OPD, Reverse KL, verl, vLLM, FSDP, Ray, PyTorch</span></p>
+          <p class="intro"><span class="zh">GRPO 与 OPD 缺少等算力下的直接对照。本项目面向数学推理任务，在同一份训练集（DAPO-Math-17K）与同一评测口径下补上该对照，并进一步回答蒸馏路线下教师选择的依据。</span><span class="en">GRPO and OPD lacked a direct comparison at matched compute. This project supplies one for math reasoning under a single training set (DAPO-Math-17K) and one evaluation protocol, and further answers how to choose a distillation teacher.</span></p>
+          <ul class="pts"><li><span class="zh"><b>基于 verl 实现 OPD 与 GRPO 双路线，核心差异是监督信号密度：</b>OPD 的监督信号是学生自采样序列上逐 token 的反向 KL 值，由教师对数概率算得，以策略梯度回传。GRPO 的监督信号是 math-verify 判定整条回答正误的一个标量。区别在于密度：前者一条回答上千个逐位置信号，后者一个标量摊给全部 token。</span><span class="en"><b>Both routes built on verl; the difference is supervision density: </b>OPD supervises every token of the student's own sampled sequence with a reverse-KL value from teacher log-probs, back-propagated as a policy gradient; GRPO supplies one math-verify scalar per answer — thousands of per-position signals versus one scalar spread over all tokens.</span></li>
+<li><span class="zh"><b>等活跃算力下 OPD 三个基准准确率均高于 GRPO，50 步即超其 250 步终点准确率：</b>准确率相对未训练的学生模型提升 17 至 26 个百分点。活跃算力按实测 GPU 利用率折算对齐；评测协议自建、独立于训练框架，覆盖三个难度递增的数学基准（GSM8K / MATH-500 / Olympiad-Bench）全量测试集共 2493 题，并做配对显著性检验。</span><span class="en"><b>At matched active compute OPD beats GRPO on all three benchmarks, passing GRPO's 250-step endpoint by step 50: </b>+17 to +26 pts over the untrained student. Active compute aligned by measured GPU utilization; the evaluation protocol is self-built and framework-independent, covering the full GSM8K / MATH-500 / OlympiadBench sets (2,493 problems) with paired significance tests.</span></li>
+<li><span class="zh"><b>同源准确率相近的双教师对照：与学生路径一致者蒸出的学生准确率更高，差距随难度递增：</b>两个教师同出自 Qwen3-4B-Base、自身基准准确率仅相差 2.2 个百分点，区别只在后训练路径：一个跳过 SFT 直接做单域数学强化学习，与学生路径一致；另一个是经多阶段通用后训练的 Qwen3-4B 指令模型。该差距至最难的基准达到统计显著，训练首步两个教师在学生序列上逐 token 对数概率差的均值即相差 1.6 倍，通用后训练的教师离学生的分布更远。</span><span class="en"><b>Two same-origin teachers of near-equal accuracy: the route-matched one distills better, and the gap grows with difficulty: </b>both come from Qwen3-4B-Base and differ by 2.2 pts on their own benchmarks; one skipped SFT and did single-domain math RL, matching the student's route, the other is the multi-stage post-trained instruct model. The gap reaches significance on the hardest benchmark, and at the first step their mean per-token log-prob gap on student sequences already differs by 1.6x.</span></li></ul>
+        </article>
+        <article class="proj" id="p3">
+          <h3 class="ptitle"><span class="zh">面向数学推理的多轮工具调用智能体强化学习训练与评测</span><span class="en">Multi-Turn Tool-Use Agent for Math Reasoning — Agentic RL Training &amp; Evaluation</span></h3>
+          <p class="stack"><span class="zh">技术栈：GRPO、DAPO、RLVR、Agentic RL、SFT、verl、vLLM、Ray、FSDP、PyTorch</span><span class="en">Stack: GRPO, DAPO, RLVR, Agentic RL, SFT, verl, vLLM, Ray, FSDP, PyTorch</span></p>
+          <p class="intro"><span class="zh">面向数学推理构建多轮工具调用智能体的完整后训练流程：基座模型 → 工具调用监督微调 → 强化学习。模型在推理途中自主发出 Python 代码，由沙箱执行后读取输出继续推理，单条轨迹最多 16 轮。</span><span class="en">Built the full post-training pipeline of a multi-turn tool-use agent for math reasoning: base model, tool-use SFT, then RL. The model emits Python mid-reasoning, a sandbox executes it and the output is read back to continue, up to 16 turns per trajectory.</span></p>
+          <ul class="pts"><li><span class="zh"><b>监督微调：沙箱真实执行的 6K 条轨迹经过程奖励筛至 3K，构建强化学习起点</b><br>轨迹数据：以 Qwen3-Coder-30B 为教师，在沙箱中真实运行代码、读回输出继续推理，端到端产出 6K 条多轮工具调用轨迹，再用过程奖励模型 ReasonFlux-PRM 打分排序保留 3K 条；以此全参微调 Qwen3-4B-Instruct-2507，得到具备多轮工具调用能力的强化学习起点模型。</span><span class="en"><b>SFT: 6K sandbox-executed trajectories filtered to 3K by process reward, giving the RL starting point</b><br>Trajectory data: with Qwen3-Coder-30B as the teacher, code was really executed in the sandbox and its output read back to continue reasoning, producing 6K multi-turn trajectories end to end; ReasonFlux-PRM scored and ranked them down to 3K, which fully fine-tuned Qwen3-4B-Instruct-2507 into a starting model with multi-turn tool-use ability.</span></li>
+<li><span class="zh"><b>强化学习数据：分层采样使代码题占比由 14% 提至 42%，让工具使用质量进入奖励</b><br>推理题库数据：30K 道，由 17.9K 道竞赛数学题、4.9K 道通用数学题、4.3K 道代码题与 3.0K 道科学题混合而成，以避免单一题型使策略收窄到固定解法。训练集数据：依奖励判定方式分层采样 600 道——数学题的奖励只看最终答案是否匹配，模型是否调用工具、代码是否跑通均不进入奖励；代码题的奖励则由沙箱执行单元测试的结果直接决定。代码题在题库中仅占 14%、随机采样下三成批次抽不到，分层提升至 42% 使其稳定进入每步更新。</span><span class="en"><b>RL data: stratified sampling lifts code problems from 14% to 42%, putting tool-use quality into the reward</b><br>Problem pool: 30K items — 17.9K competition math, 4.9K general math, 4.3K code, 3.0K science — mixed so no single type narrows the policy to one solution pattern. Training set: 600 items stratified by how the reward is judged; math rewards check only the final answer, ignoring whether tools were called, while code rewards come from sandbox unit tests. Code problems are 14% of the pool and missing from three in ten batches under random sampling, so lifting them to 42% keeps them in every update.</span></li>
+<li><span class="zh"><b>评测与成果：AIME 测试集上共提升 16.3 个百分点，训练量仅为全量的 1.4%</b><br>在 AIME2024、AIME2025 各 30 题上评测，每题独立作答 16 次、合计 960 次采样。</span><span class="en"><b>Results: +16.3 pts in total on the AIME test sets, using 1.4% of the full training volume</b><br>Evaluated on AIME2024 and AIME2025, 30 problems each, 16 independent runs per problem, 960 samples in total.</span></li></ul>
+        </article>
+      </section>
+
+      <section id="comp">
+        <h2><span class="zh">算法竞赛</span><span class="en">COMPETITIONS</span></h2>
+        <article class="proj" id="c1">
+          <div class="row"><h3 class="ptitle"><span class="zh">Pacman 多智能体对战系统</span><span class="en">Pacman Multi-Agent Contest</span></h3><span class="date"><span class="zh">排名 11/298</span><span class="en">rank 11/298</span></span></div>
+          <p class="intro"><span class="zh">基于所有参赛者的两两博弈胜率</span><span class="en">Ranked by pairwise win rate against all entrants</span></p>
+          <ul class="pts"><li><span class="zh">搭建 2v2 多智能体 Pacman 对战系统，采用高层 PDDL 符号规划 + 低层 A* 安全路径搜索 + 简单 Q-learning 兜底的 planner–executor 混合架构</span><span class="en">Built a 2v2 multi-agent Pacman contest system on a planner–executor hybrid architecture: high-level PDDL symbolic planning, low-level A* safe path search and a simple Q-learning fallback</span></li>
+<li><span class="zh">高层将局面抽象为符号谓词与目标（吃食物/能量豆、回家），在保守进攻、激进进攻、边界巡逻、追击入侵者、位置重排等策略模式间切换，从风险、比分、携带食物和地图控制角度做全局决策</span><span class="en">The high level abstracts the board into symbolic predicates and goals (eat food/capsules, return home) and switches between strategy modes — cautious attack, aggressive attack, border patrol, chasing invaders and repositioning — deciding globally from risk, score, carried food and map control</span></li>
+<li><span class="zh">多智能体协同方面，每个智能体将自己的意图、目标、危险等级、已认领食物/能量豆、边界站位写入共享信息表，实现“不抢同一食物、自动分配边界防守位、通过吃能量豆救援队友”等协作行为</span><span class="en">For coordination, each agent writes its intent, target, danger level, claimed food/capsules and border post into a shared table, producing behaviours such as never contesting the same food, splitting border defence automatically and rescuing teammates by eating capsules</span></li>
+<li><span class="zh">低层在 A* 中加入避开对手危险区、回家路径安全评估、边界约束等启发式，在规划失败或时间不足时，用基于得分变化与距离特征的 Q-learning 策略作为保守 fallback，保证整体策略稳定性</span><span class="en">The low level adds heuristics to A* for avoiding opponents' danger zones, assessing the safety of the route home and respecting border constraints; when planning fails or time runs short, a Q-learning policy over score-change and distance features acts as a conservative fallback that keeps the overall strategy stable</span></li></ul>
+          <p class="stack cstack"><span class="zh">技术栈：多智能体对战博弈、PDDL 规划、基于时空的 A* 搜索、启发式搜索、Q-learning</span><span class="en">Stack: multi-agent adversarial games, PDDL planning, space-time A* search, heuristic search, Q-learning</span></p>
+        </article>
+        <article class="proj" id="c2">
+          <div class="row"><h3 class="ptitle"><span class="zh">Flatland 多智能体铁路调度系统</span><span class="en">Flatland Multi-Agent Railway Scheduling</span></h3><span class="date"><span class="zh">排名 14/315</span><span class="en">rank 14/315</span></span></div>
+          <p class="intro"><span class="zh">基于所有智能体数量所有地图的按时到达比例 + 到达所需时间步</span><span class="en">Ranked by on-time arrival rate and time steps across all maps and agent counts</span></p>
+          <ul class="pts"><li><span class="zh">在 Flatland/Piglet 环境中实现多智能体 planner–executor 架构：高层根据每列车距截止时间的“时间余量”计算紧迫度并依次调度，低层使用 Safe-Interval Path Planning (SIPP) 为每辆列车规划满足截止时间和故障约束的单智能体轨迹</span><span class="en">Implemented a multi-agent planner–executor architecture in Flatland/Piglet: the high level ranks urgency by each train's slack to its deadline and schedules them in turn, while the low level uses Safe-Interval Path Planning (SIPP) to plan a single-agent trajectory per train under deadline and malfunction constraints</span></li>
+<li><span class="zh">基于已规划路径维护轨道节点和区段的时间占用表，合并空闲区间生成安全时间段，在 SIPP 搜索中把状态扩展为“位置 + 方向 + 所在安全时间段”，并用基于曼哈顿距离的启发式引导搜索，避免节点碰撞和对向交换冲突</span><span class="en">Time-occupancy tables for track nodes and segments are maintained from the planned paths, free intervals are merged into safe windows, and the SIPP search expands states as position + direction + safe interval, guided by a Manhattan-distance heuristic to avoid node collisions and head-on swaps</span></li>
+<li><span class="zh">引入轨道结构约束，对死胡同轨道设置规则，仅在作为起终点或已被占用时允许进入，并采用“带结构约束的优先规划 → 放宽约束的兜底规划”两阶段策略，在高密度路网中兼顾可解率与搜索效率</span><span class="en">Track-structure constraints are added — a dead-end track may be entered only when it is a start or goal or already occupied — together with a two-stage strategy of constrained priority planning followed by relaxed fallback planning, balancing solvable rate against search efficiency on dense networks</span></li>
+<li><span class="zh">设计 MCP 重规划兜底模块：故障发生时保留所有列车已执行的轨迹前缀，局部微调受影响列车的剩余行程进行排队等待，避免全局重算超时和内存爆炸</span><span class="en">Designed an MCP replanning fallback: on a malfunction the executed trajectory prefixes of all trains are kept and only the remaining journey of affected trains is adjusted locally into a queue-and-wait, avoiding global recomputation timeouts and memory blowups</span></li></ul>
+          <p class="stack cstack"><span class="zh">技术栈：多智能体路径规划、SIPP 算法、BFS 反向搜索、优先级调度、基于时空的 MCP 重规划</span><span class="en">Stack: multi-agent path finding, SIPP, reverse BFS, priority scheduling, space-time MCP replanning</span></p>
+        </article>
+      </section>
+
+      <section id="skill">
+        <h2><span class="zh">技能</span><span class="en">TECHNICAL SKILLS</span></h2>
+        <ul class="pts lz"><li>Agent 方法：Multi-Agent 协作、ReAct 多轮工具调用与沙箱执行、PDDL 规划、LangChain / LangGraph、MCP</li>
+<li>RAG 与检索：Embedding（BGE-M3）、BM25 + 向量混合召回、Cross-Encoder 重排、向量库 FAISS / Milvus</li>
+<li>微调与部署：SFT / LoRA / QLoRA、知识蒸馏、Unsloth、vLLM / SGLang、Ollama / llama.cpp、大模型 API 调用</li>
+<li>评测与实验管理：LLM-as-a-Judge 去偏、无标注评测基准、配对显著性检验、WandB / SwanLab</li>
+<li>工程与云：Python、Linux、Git、Docker、AKS、Azure OpenAI Service / Azure Machine Learning</li></ul>
+        <ul class="pts le"><li>Evaluation &amp; experiment management: LLM-as-a-Judge de-biasing, unlabeled proxy benchmarks, paired significance testing, WandB / SwanLab</li>
+<li>Fine-tuning &amp; agent toolchain: Unsloth, SGLang, Ollama / llama.cpp, LangChain / LangGraph, MCP</li>
+<li>Engineering &amp; cloud: Python, Linux, Git, Docker, AKS, Azure OpenAI Service / Azure Machine Learning</li>
+<li>Languages: Mandarin (native), English (full professional proficiency)</li></ul>
+      </section>
+    </main>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  var page = document.getElementById('page');
+  var btns = page.querySelectorAll('.lang button');
+  function setLang(l){
+    page.setAttribute('data-lang', l);
+    document.documentElement.lang = (l === 'en') ? 'en' : 'zh-CN';
+    btns.forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.set === l)); });
+    try { localStorage.setItem('bh-lang', l); } catch(e){}
+  }
+  btns.forEach(function(b){ b.addEventListener('click', function(){ setLang(b.dataset.set); }); });
+  var saved = null;
+  try { saved = localStorage.getItem('bh-lang'); } catch(e){}
+  if (saved === 'en' || saved === 'zh') setLang(saved);
+  else if (/^en/i.test(navigator.language || '')) setLang('en');
+  else setLang('zh');
+})();
+</script>
+
+</body>
+</html>
