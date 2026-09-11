@@ -1,0 +1,1612 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>简历 · 手机版</title>
+<style>
+  :root{
+    color-scheme:light;
+    --desk:#e4e4e4;
+    --paper:#ffffff;
+    --ink:#222222;
+    --line:#2a2a2a;
+    --grey:#d8d8d8;
+    --grey-2:#efefef;
+    --grey-3:#bfbfbf;
+    --muted:#6f6f6f;
+    --font:-apple-system,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body:has(#page[data-view="mo"]){background:#fff}
+  body{margin:0;background:var(--desk);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  #page{padding:22px 14px 40px}
+
+  /* language switching */
+  .en{display:none}
+  #page[data-lang="en"] .en{display:inline}
+  #page[data-lang="en"] .zh{display:none}
+  svg .en{display:none}
+  #page[data-lang="en"] svg .en{display:inline}
+  #page[data-lang="en"] svg .zh{display:none}
+  ul.tags.en,.menu-items.en{display:none}
+  #page[data-lang="en"] ul.tags.en{display:flex}
+  #page[data-lang="en"] ul.tags.zh{display:none}
+  #page[data-lang="en"] .menu-items.en{display:inline}
+  #page[data-lang="en"] .menu-items.zh{display:none}
+
+  /* ---------- window ---------- */
+  .vs{
+    max-width:1340px;margin:0 auto;background:var(--paper);
+    border:2px solid var(--line);border-radius:4px;
+    box-shadow:3px 3px 0 0 var(--grey-3);
+    display:grid;grid-template-rows:auto auto auto 1fr auto auto;
+    min-height:calc(100vh - 62px);
+  }
+  .bar{border-bottom:2px solid var(--line);display:flex;align-items:center;gap:10px;padding:0 12px}
+  .titlebar{height:36px;font-size:15px}
+  .titlebar .dot{width:12px;height:12px;border:2px solid var(--line);border-radius:3px;display:inline-block}
+  .titlebar .title{flex:1;text-align:center}
+  .titlebar .wc{display:flex;gap:6px;font-weight:700;letter-spacing:2px}
+  .titlebar .wc span{width:16px;text-align:center}
+  .menubar{height:34px;font-size:15px;gap:0}
+  .mi{padding:0 10px;cursor:default;border-radius:3px}
+  .mi:hover{background:var(--grey-2)}
+  .menubar .spacer{flex:1}
+  .lang{display:inline-flex;align-items:center;border:2px solid var(--line);border-radius:4px;overflow:hidden;font-size:14px}
+  .lang button{all:unset;cursor:pointer;padding:1px 10px;color:var(--muted)}
+  .lang button[aria-pressed="true"]{background:var(--ink);color:#fff}
+  .lang button:focus-visible{outline:2px dashed var(--ink);outline-offset:-3px}
+
+  .toolbar{height:56px;gap:14px}
+  .tb{all:unset;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border:2px solid var(--line);border-radius:50%;background:var(--paper)}
+  .tb:hover{background:var(--grey-2)}
+  .tb:focus-visible{outline:2px dashed var(--ink);outline-offset:2px}
+  .tb svg{width:18px;height:18px}
+  .tb.run{width:auto;border-radius:20px;padding:0 14px 0 10px;gap:6px;font-size:14px}
+  .tb-group{display:flex;gap:8px;align-items:center}
+  .vsep{width:2px;height:28px;background:var(--grey-3)}
+  .now{flex:1;text-align:center;font-size:14px;color:var(--muted)}
+  .now b{color:var(--ink);font-weight:400}
+  .now .prog{display:block;margin:2px auto 0;width:min(320px,100%);height:9px;border:2px solid var(--line);border-radius:2px;overflow:hidden}
+  .now .prog i{display:block;height:100%;background:var(--grey-3);width:33.3%;transition:width .3s}
+  .search{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--line);border-radius:20px;padding:2px 12px;background:var(--paper)}
+  .search svg{width:14px;height:14px}
+  .search input{all:unset;width:130px;font-family:var(--font);font-size:14px}
+  .search input::placeholder{color:var(--muted)}
+
+  /* ---------- workspace ---------- */
+  .workspace{display:grid;grid-template-columns:212px minmax(0,1fr) 238px;min-height:560px}
+  .pane{border-right:2px solid var(--line);display:flex;flex-direction:column}
+  .pane:last-child{border-right:0;border-left:2px solid var(--line)}
+  .pane-head{background:var(--grey);border-bottom:2px solid var(--line);padding:4px 10px;font-weight:700;font-size:14px;display:flex;justify-content:space-between;align-items:center}
+  .pane-head .pin{font-size:12px;letter-spacing:2px}
+  .sticky{position:sticky;top:0;align-self:start}
+
+  /* explorer tree */
+  .tree{list-style:none;margin:0;padding:8px 6px;font-size:14px}
+  .tree li{margin:0}
+  .tree .node{display:flex;align-items:center;gap:6px;padding:3px 6px;border-radius:3px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tree .node:hover{background:var(--grey-2)}
+  .tree .node.active{background:var(--grey);outline:2px solid var(--line);outline-offset:-2px}
+  .tree .node:focus-visible{outline:2px dashed var(--ink);outline-offset:-2px}
+  .tree .lvl1{padding-left:18px}.tree .lvl2{padding-left:36px}
+  .tree svg{width:14px;height:14px;flex:none}
+  .tree .sol{font-weight:700}
+  .tree .caret{width:12px;flex:none;font-size:13px;line-height:1}
+
+  /* editor */
+  .editor{min-width:0}
+  .tabs{display:flex;border-bottom:2px solid var(--line);background:var(--grey-2);overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{all:unset;cursor:pointer;padding:5px 9px;border-left:2px solid var(--line);font-size:13px;white-space:nowrap;display:inline-flex;gap:6px;align-items:center;background:var(--grey)}
+  .tabs .tab:first-child{border-left:0}
+  .tabs .tab:last-child{border-right:2px solid var(--line)}
+  .tab{border-bottom:2px solid transparent}
+  .tab[aria-selected="true"]{background:var(--paper);font-weight:700}
+  .tab .x{font-size:12px;color:var(--muted);display:none}
+  .tab[aria-selected="true"] .x,.tab:hover .x{display:inline}
+
+  .tab:focus-visible{outline:2px dashed var(--ink);outline-offset:-3px}
+  .doc{padding:26px 30px 34px;max-width:900px}
+  .doc[hidden]{display:none}
+
+  h1{font-size:34px;line-height:1.15;margin:0 0 4px;font-weight:700}
+  .role{margin:0 0 14px;color:var(--muted);font-size:15px}
+  .lead{margin:0 0 22px;font-size:16px;max-width:64ch}
+  h2{font-size:20px;margin:0;font-weight:700}
+  .sechead{background:var(--grey);border:2px solid var(--line);padding:3px 10px;margin:22px 0 0;display:flex;justify-content:space-between;align-items:baseline}
+  .sechead h2{font-size:16px}
+  .sechead small{color:var(--muted);font-weight:400;font-size:13px}
+  .sec{border:2px solid var(--line);border-top:0;padding:14px 16px}
+
+  .edu{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .edu-item{display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:start}
+  .edu-item svg{width:56px;height:56px}
+  .edu-item h3{margin:0;font-size:16px}
+  .edu-item p{margin:0;font-size:14px}
+  .edu-item .when{color:var(--muted)}
+  .edu-item .note{margin-top:6px;color:var(--ink)}
+  .contact{margin-top:18px;font-size:14px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 14px}
+  .contact a{color:var(--ink)}
+
+  /* cover flow */
+  .flow-wrap{border:2px solid var(--line);padding:14px 10px 10px;background:var(--paper)}
+  .flow{position:relative;height:290px;perspective:1000px;overflow:hidden}
+  .cover{position:absolute;left:50%;top:14px;width:330px;margin-left:-165px;border:3px solid var(--line);background:var(--paper);
+    transition:transform .45s ease,opacity .45s ease;cursor:pointer;transform-style:preserve-3d;padding:8px 8px 4px}
+  .cover svg{width:100%;height:auto;display:block}
+  .cover .cap{text-align:center;font-size:12px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cover.pos-0{transform:translateX(0);z-index:5}
+  .cover.pos-m1{transform:translateX(-270px) rotateY(48deg) scale(.86);z-index:4;opacity:.95}
+  .cover.pos-p1{transform:translateX(270px) rotateY(-48deg) scale(.86);z-index:4;opacity:.95}
+  .ghost{position:absolute;left:50%;top:34px;width:300px;height:220px;margin-left:-150px;border:3px solid var(--line);background:var(--paper);pointer-events:none}
+  .ghost.g1{transform:translateX(-380px) rotateY(60deg) scale(.8);z-index:3}
+  .ghost.g2{transform:translateX(-450px) rotateY(66deg) scale(.76);z-index:2}
+  .ghost.g3{transform:translateX(380px) rotateY(-60deg) scale(.8);z-index:3}
+  .ghost.g4{transform:translateX(450px) rotateY(-66deg) scale(.76);z-index:2}
+  .scroller{display:grid;grid-template-columns:22px 1fr 22px;align-items:stretch;height:20px;border:2px solid var(--line);margin:10px auto 0;max-width:520px}
+  .scroller button{all:unset;cursor:pointer;text-align:center;font-size:11px;line-height:16px;border-right:2px solid var(--line)}
+  .scroller button:last-child{border-right:0;border-left:2px solid var(--line)}
+  .scroller button:focus-visible{outline:2px dashed var(--ink);outline-offset:-3px}
+  .scroller .track{position:relative;background:var(--grey-2)}
+  .scroller .thumb{position:absolute;top:2px;bottom:2px;width:33.3%;background:var(--grey-3);border:2px solid var(--line);transition:left .3s}
+
+  .pblock[hidden]{display:none}
+  .pblock .kicker{margin:14px 0 2px;color:var(--muted);font-size:13px}
+  .pblock h2{font-size:22px;line-height:1.3;margin:0 0 8px}
+  .pblock .stack{margin:0 0 8px;font-size:13px;color:var(--muted)}
+  .pblock .intro{margin:0 0 14px;max-width:70ch}
+
+  table.grid{width:100%;border-collapse:collapse;border:2px solid var(--line);font-size:14px}
+  table.grid th{background:var(--grey);border:2px solid var(--line);text-align:left;padding:4px 10px;font-weight:700}
+  table.grid td{border:1px solid var(--grey-3);border-left:2px solid var(--line);border-right:2px solid var(--line);padding:8px 10px;vertical-align:top}
+  table.grid tr:nth-child(even) td{background:var(--grey-2)}
+  table.grid td.pt{width:34%;font-weight:700}
+  #page[data-lang="en"] table.grid td.pt{width:38%}
+  table.grid tr[hidden]{display:none}
+
+  .figs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
+  .figs figure{margin:0;border:2px solid var(--line);padding:10px 10px 8px}
+  .figs figcaption{font-size:13.5px;margin-top:6px;line-height:1.5}
+  .figs figcaption b{display:block;font-size:15px}
+
+  /* ink drawings */
+  .ink{width:100%;height:auto;display:block;shape-rendering:geometricPrecision}
+  .ink path,.ink circle,.ink line,.ink ellipse,.ink rect,.ink polyline{fill:none;stroke:var(--line);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .ink .solid{fill:var(--ink);stroke:none}
+  .ink .grey{fill:var(--grey-3)}
+  .ink .white{fill:var(--paper)}
+  .ink .hatched{fill:url(#hatch)}
+  .ink .thin{stroke-width:1.5}
+  .ink text{font-family:var(--font);fill:var(--ink);stroke:none}
+  .ink .lbl{font-size:11.5px;fill:var(--muted)}
+  .ink .val{font-size:11px;font-weight:700}
+  .ink .big{font-size:22px;font-weight:700}
+  .ink .mid{font-size:15px;font-weight:700}
+  .ink .mono{font-size:11px}
+  .ink .arrow{marker-end:url(#ah)}
+  .ink .dash{stroke-dasharray:5 5;stroke-width:1.5;stroke:var(--muted)}
+
+  /* competition cards */
+  .cards{display:grid;gap:14px}
+  .card{border:2px solid var(--line);background:var(--paper)}
+  .card header{background:var(--grey);border-bottom:2px solid var(--line);padding:5px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .card h3{margin:0;font-size:16px}
+  .card .rank{border:2px solid var(--line);background:var(--paper);padding:0 10px;font-size:13.5px;white-space:nowrap}
+  .blist{list-style:none;margin:0;padding:12px 15px;display:grid;gap:9px;font-size:14px}
+  .blist li{position:relative;padding-left:18px;line-height:1.7;max-width:76ch}
+  .blist li::before{content:"";position:absolute;left:2px;top:.66em;width:7px;height:7px;background:var(--ink)}
+  .blist b{font-weight:700;margin-right:.35em}
+
+  /* skills */
+  .skill-row{display:grid;grid-template-columns:170px 1fr;gap:10px 14px;align-items:start;padding:10px 0;border-bottom:1px solid var(--grey-3)}
+  .skill-row:last-child{border-bottom:0}
+  .skill-row .lab{font-weight:700;padding-top:3px}
+  ul.tags{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+  ul.tags li{border:2px solid var(--line);border-radius:4px;padding:1px 9px;font-size:13.5px;background:var(--paper)}
+
+  /* properties */
+  .props-body{padding:8px 8px;font-size:13.5px}
+  .props-sel{border:2px solid var(--line);padding:2px 8px;margin-bottom:8px;display:flex;justify-content:space-between;background:var(--grey-2)}
+  .props-sel span.arrow{font-size:11px}
+  table.props{width:100%;border-collapse:collapse;border:2px solid var(--line)}
+  table.props th{width:38%;text-align:left;font-weight:400;color:var(--muted);background:var(--grey-2);border:1px solid var(--grey-3);padding:4px 6px;vertical-align:top}
+  table.props td{border:1px solid var(--grey-3);padding:4px 6px}
+  .props-block[hidden]{display:none}
+
+  /* bottom */
+  .bottom{border-top:2px solid var(--line)}
+  .bottom .tabs{border-bottom:2px solid var(--line)}
+  .out{padding:8px 14px;font-size:13.5px;min-height:96px}
+  .out div{padding:1px 0;white-space:pre-wrap}
+  .out a{color:var(--ink)}
+  .errlist{width:100%;border-collapse:collapse;font-size:13.5px}
+  .errlist th{text-align:left;background:var(--grey-2);border:1px solid var(--grey-3);padding:3px 9px;font-weight:700}
+  .errlist td{border:1px solid var(--grey-3);padding:3px 9px;vertical-align:top}
+  .errlist td.sev{white-space:nowrap}
+  .errlist td.code{white-space:nowrap;color:var(--muted)}
+  .statusbar{border-top:2px solid var(--line);background:var(--grey);height:26px;font-size:13px;display:flex;align-items:center;gap:22px;padding:0 12px}
+  .statusbar .sp{flex:1}
+
+  /* ===================== mobile: WeChat Moments ===================== */
+  #moments{display:none}
+  #lightbox{display:none}
+  @media (max-width:820px), (pointer:coarse) and (max-width:1200px){ /* view forced below */
+    body{background:#fff}
+    #page{padding:0}
+    .vs{display:none}
+    #moments{display:block}
+  }
+  #page[data-view="vs"]{padding:22px 14px 40px}
+  #page[data-view="vs"] .vs{display:grid}
+  #page[data-view="vs"] #moments{display:none}
+  #page[data-view="mo"]{padding:0}
+  #page[data-view="mo"] .vs{display:none}
+  #page[data-view="mo"] #moments{display:block}
+  #moments{--wx-name:#576b95;--wx-meta:#b0b0b0;--wx-line:#ededed;--wx-soft:#f7f7f7;
+    background:#fff;max-width:560px;margin:0 auto;padding-bottom:34px}
+  .mo-cover{position:relative;background:#1b1b1b;padding-bottom:2px}
+  .mo-banner{display:block;width:100%;height:auto}
+  .mo-banner path,.mo-banner circle,.mo-banner line{fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .mo-banner .ground{fill:#1b1b1b;stroke:none}
+  .mo-banner .faint{stroke:rgba(255,255,255,.28);stroke-width:1.2}
+  .mo-banner .dot{fill:#fff;stroke:none}
+  .mo-banner text{fill:rgba(255,255,255,.8);stroke:none;font-family:var(--font);font-size:12px}
+  .mo-banner .mini{font-size:9.5px;fill:rgba(255,255,255,.9)}
+  .mo-banner .blk{fill:none;stroke:rgba(255,255,255,.9);stroke-width:1.8}
+  .mo-banner .arw{fill:none;stroke:rgba(255,255,255,.8);stroke-width:1.6;stroke-linecap:round}
+  .mo-banner .res{fill:none;stroke:rgba(255,255,255,.45);stroke-width:1.4;stroke-dasharray:4 3}
+  .mo-topbar{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:10px 12px}
+  .mo-topbar .lang{border-color:#fff;background:rgba(0,0,0,.35)}
+  .mo-topbar .lang button{color:rgba(255,255,255,.78)}
+  .mo-topbar .lang button[aria-pressed="true"]{background:#fff;color:#1b1b1b}
+  .mo-tag{color:rgba(255,255,255,.8);font-size:13px;letter-spacing:.05em}
+  .mo-id{display:flex;justify-content:flex-end;align-items:flex-end;gap:10px;padding:0 14px;margin-bottom:-26px}
+  .mo-id .nm{color:#fff;font-weight:700;font-size:17px;padding-bottom:20px;text-shadow:0 1px 4px rgba(0,0,0,.6)}
+  .mo-av{width:56px;height:56px;border:2px solid #fff;background:#fff;border-radius:4px;overflow:hidden;flex:none}
+  .mo-av svg{width:100%;height:100%;display:block}
+  .mo-av{border-radius:6px}
+  .mo-id .mo-av{border-radius:8px}
+
+  .mo-info{padding:52px 16px 18px;border-bottom:8px solid var(--wx-line)}
+  .mo-info.mo-skills{padding:16px;border-bottom:0;border-top:8px solid var(--wx-line)}
+  .mo-role{margin:0 0 8px;color:var(--wx-meta);font-size:13.5px}
+  .mo-lead{margin:0 0 16px;font-size:15px;line-height:1.65}
+  .mo-rows{margin:0;font-size:14px;line-height:1.6}
+  .mo-rows dt{color:var(--wx-meta);font-size:12.5px;letter-spacing:.08em;margin-top:14px}
+  .mo-rows dt:first-child{margin-top:0}
+  .mo-rows dd{margin:4px 0 0}
+  .mo-rows dd .dim{color:var(--wx-meta);font-size:13px}
+  .mo-rows dd a{color:var(--wx-name);text-decoration:none}
+  .mo-rows .mo-more{margin-top:0}
+  .mo-feed{padding:0}
+  .mo-post{display:grid;grid-template-columns:42px 1fr;gap:10px;padding:16px 14px;border-bottom:8px solid var(--wx-line)}
+  .mo-post:last-child{border-bottom:0}
+  .mo-post .mo-av{width:42px;height:42px;border:1px solid var(--wx-line);border-radius:4px}
+  .mo-body{min-width:0}
+  .mo-user{color:var(--wx-name);font-weight:700;font-size:15.5px;margin-bottom:4px}
+  .mo-text{font-size:15px;line-height:1.6;color:#1b1b1b;margin:0}
+  .mo-sub{color:var(--wx-meta);font-size:13.5px;margin:4px 0 0;line-height:1.5}
+  .mo-more{margin-top:10px}
+  .mo-more[hidden]{display:none}
+  .mo-more table.grid{font-size:13.5px}
+  .mo-more table.grid thead{display:none}
+  .mo-more table.grid tr{display:block;border-bottom:1px solid var(--grey-3)}
+  .mo-more table.grid tr:last-child{border-bottom:0}
+  .mo-more table.grid td{display:block;border:0;padding:8px 10px 0;background:none !important}
+  .mo-more table.grid td:last-child{padding-bottom:10px}
+  .mo-more table.grid td.pt{width:auto;padding-bottom:2px}
+  .mo-more .edu{grid-template-columns:1fr;gap:14px}
+  .mo-more .cards{gap:10px}
+  .mo-more .skill-row{grid-template-columns:1fr;padding:8px 0}
+  .mo-more .sec{border:0;padding:0}
+  .mo-expand{all:unset;cursor:pointer;color:var(--wx-name);font-size:14px;margin-top:8px;display:inline-block}
+  .mo-more[hidden]{display:none}
+  .mo-more .mo-pts{margin-top:8px}
+  .mo-expand:focus-visible{outline:2px dashed var(--wx-name);outline-offset:2px}
+  .mo-grid{display:grid;gap:8px;margin-top:12px;align-items:start}
+  .mo-grid.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .mo-grid.one{grid-template-columns:minmax(0,80%)}
+  .mo-grid:empty{display:none}
+  .mo-grid figure{margin:0;border:1px solid #e6e6e6;border-radius:8px;background:#fff;
+    cursor:zoom-in;padding:8px 7px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .mo-grid figure:active{background:#fafafa}
+  .mo-grid svg{width:100%;height:auto;display:block}
+  .mo-intro{margin-top:8px}
+  .mo-pts{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+  .mo-pts li{position:relative;padding-left:16px;font-size:14.5px;line-height:1.65}
+  .mo-pts li::before{content:"";position:absolute;left:2px;top:.68em;width:5px;height:5px;background:#1b1b1b}
+  .mo-pts b{font-weight:700}
+  #page[data-lang="en"] ul.lz{display:none}
+  #page:not([data-lang="en"]) ul.le{display:none}
+  .mo-meta{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+  .mo-time{color:var(--wx-meta);font-size:13px}
+  .mo-dots{background:var(--wx-soft);color:var(--wx-name);border-radius:3px;padding:1px 7px;font-size:13px;letter-spacing:2px;line-height:1.4}
+  .mo-social{background:var(--wx-soft);border-radius:4px;margin-top:8px;font-size:14px;line-height:1.6}
+  .mo-likes{padding:6px 9px;border-bottom:1px solid #e6e6e6;color:var(--wx-name)}
+  .mo-likes .heart{color:var(--wx-meta);margin-right:5px}
+  .mo-cmt{padding:6px 9px;color:#1b1b1b}
+  .mo-cmt b{color:var(--wx-name);font-weight:400}
+  .mo-cover-info{padding:12px 16px 10px;color:#fff;font-size:13.5px;font-weight:700;line-height:1.7}
+  .mo-cover-info p{margin:0}
+  .mo-cover-info .sub{font-weight:400;font-size:12px;color:rgba(255,255,255,.9);line-height:1.6}
+  .mo-cover-info .sub:first-of-type{margin-top:7px}
+  .mo-sign{margin:0;padding:32px 16px 12px;text-align:right;color:#1b1b1b;font-size:13px;font-weight:700;
+    border-bottom:8px solid var(--wx-line)}
+  .mo-pts .dim{color:var(--wx-meta);font-size:13px}
+  .mo-meta{position:relative}
+  .mo-dots{all:unset;cursor:pointer;background:var(--wx-soft);color:var(--wx-name);border-radius:3px;
+    padding:1px 7px;font-size:13px;letter-spacing:2px;line-height:1.4}
+  .mo-dots:focus-visible{outline:2px dashed var(--wx-name);outline-offset:2px}
+  .mo-acts{position:absolute;right:36px;bottom:-3px;display:none;align-items:center;
+    background:#4c4c4c;color:#fff;border-radius:5px;padding:2px 3px;white-space:nowrap;z-index:5;
+    box-shadow:0 2px 8px rgba(0,0,0,.25)}
+  .mo-acts.on{display:flex}
+  .mo-act{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:5px;padding:5px 12px;
+    font-size:13.5px;color:#fff;border-radius:4px}
+  .mo-act + .mo-act{border-left:1px solid rgba(255,255,255,.25)}
+  .mo-act .i{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;
+    stroke-linejoin:round;stroke-linecap:round;flex:none}
+  .mo-act .l-off{display:none}
+  .mo-act.on .l-on{display:none}
+  .mo-act.on .l-off{display:inline}
+  .mo-act.on .i{fill:currentColor}
+  .mo-me{font-weight:700}
+  .mo-cmtbox{display:flex;gap:6px;padding:6px 9px;border-top:1px solid #e6e6e6}
+  .mo-cmtbox[hidden]{display:none}
+  .mo-in{flex:1;min-width:0;border:1px solid #e0e0e0;border-radius:4px;padding:4px 8px;
+    font-family:var(--font);font-size:14px;background:#fff;color:#1b1b1b}
+  .mo-in:focus{outline:1px solid var(--wx-name)}
+  .mo-send{all:unset;cursor:pointer;color:var(--wx-name);font-size:14px;padding:4px 8px}
+  .mo-foot{text-align:center;color:var(--wx-meta);font-size:13px;padding:18px 14px 0;line-height:1.8}
+  .mo-foot a{color:var(--wx-name);text-decoration:none}
+
+  .mo-switch{all:unset;cursor:pointer;color:var(--wx-name);font-size:13.5px;padding:6px 10px;border:1px solid var(--wx-line);border-radius:4px}
+  .mo-switch:focus-visible{outline:2px dashed var(--wx-name);outline-offset:2px}
+  .sb-switch{all:unset;cursor:pointer;font-size:13px;text-decoration:underline;text-underline-offset:2px}
+  .sb-switch:focus-visible{outline:2px dashed var(--ink);outline-offset:2px}
+  #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:60;align-items:center;justify-content:center;padding:18px}
+  #lightbox.on{display:flex}
+  .lb-inner{background:#fff;border-radius:6px;padding:14px;width:100%;max-width:600px;max-height:88vh;overflow:auto}
+  .lb-inner svg{width:100%;height:auto}
+
+  @media (max-width:820px){
+    .tabs{flex-wrap:wrap}
+    .tabs .tab:last-child{border-right:0}
+    .lang{flex:none}
+    .tb.run{white-space:nowrap}
+  }
+  @media (max-width:640px){
+    .menubar .menu-items{display:none}
+    .menubar{justify-content:flex-end}
+    .toolbar{height:auto;padding:8px 12px;flex-wrap:wrap}
+    .search{flex:1;min-width:0}
+    .search input{width:100%}
+    .out{padding:8px 12px}
+    .out div{overflow-wrap:anywhere}
+    table.grid thead{display:none}
+    table.grid tr{display:block;border-bottom:2px solid var(--line)}
+    table.grid tr:last-child{border-bottom:0}
+    table.grid td{display:block;border:0;padding:9px 11px 0}
+    table.grid td:last-child{padding-bottom:11px}
+    table.grid td.pt{width:auto;padding-bottom:2px}
+    .errlist td.code{white-space:normal}
+    .card header{gap:6px}
+  }
+  @media (max-width:1200px){
+    .workspace{grid-template-columns:212px minmax(0,1fr)}
+    .pane.props{display:none}
+    .tab{font-size:12.5px;padding:5px 7px;gap:5px}
+  }
+  @media (max-width:1020px){
+    .workspace{grid-template-columns:1fr}
+    .pane.explorer,.pane.props{display:none}
+    .now{display:none}
+    .flow{height:250px}
+    .cover{width:300px;margin-left:-150px}
+    .cover.pos-m1{transform:translateX(-190px) rotateY(55deg) scale(.7);opacity:.7}
+    .cover.pos-p1{transform:translateX(190px) rotateY(-55deg) scale(.7);opacity:.7}
+    .ghost{display:none}
+    .doc{padding:18px 16px 26px}
+    .edu,.figs{grid-template-columns:1fr}
+    .skill-row{grid-template-columns:1fr}
+    .search input{width:80px}
+  }
+</style>
+
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#2a2a2a" stroke-width="1.4"/>
+    </pattern>
+    <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1 1 L9 5 L1 9" fill="none" stroke="#2a2a2a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <symbol id="i-folder" viewBox="0 0 16 16"><path d="M1.5 4.5h4l1.5 1.5h7.5v7.5h-13z" fill="#fff" stroke="#2a2a2a" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+    <symbol id="i-file" viewBox="0 0 16 16"><path d="M3.5 1.5h6l3 3v10h-9z" fill="#fff" stroke="#2a2a2a" stroke-width="1.5" stroke-linejoin="round"/><path d="M9.5 1.5v3h3" fill="none" stroke="#2a2a2a" stroke-width="1.5"/></symbol>
+    <symbol id="i-py" viewBox="0 0 16 16"><path d="M3.5 1.5h6l3 3v10h-9z" fill="#fff" stroke="#2a2a2a" stroke-width="1.5" stroke-linejoin="round"/><path d="M5.5 8h5M5.5 11h4" stroke="#2a2a2a" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="i-sln" viewBox="0 0 16 16"><path d="M2 2h12v12H2z" fill="#fff" stroke="#2a2a2a" stroke-width="1.5"/><path d="M5 8l2 2 4-5" fill="none" stroke="#2a2a2a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<div id="page" data-lang="zh" data-view="mo">
+<div class="vs" id="top">
+
+  <!-- ===== title bar ===== -->
+  <div class="bar titlebar">
+    <span class="dot" aria-hidden="true"></span>
+    <span class="title"><span class="zh">韩天悦.sln</span><span class="en">TianyueHan.sln</span></span>
+    <span class="wc" aria-hidden="true"><span>_</span><span>▢</span><span>✕</span></span>
+  </div>
+
+  <!-- ===== menu bar ===== -->
+  <div class="bar menubar">
+    <span class="menu-items zh"><span class="mi">文件</span><span class="mi">编辑</span><span class="mi">视图</span><span class="mi">项目</span><span class="mi">生成</span><span class="mi">调试</span><span class="mi">测试</span><span class="mi">工具</span><span class="mi">帮助</span></span><span class="menu-items en"><span class="mi">File</span><span class="mi">Edit</span><span class="mi">View</span><span class="mi">Project</span><span class="mi">Build</span><span class="mi">Debug</span><span class="mi">Test</span><span class="mi">Tools</span><span class="mi">Help</span></span>
+    <span class="spacer"></span>
+    <div class="lang" role="group" aria-label="语言 / Language">
+      <button type="button" data-set="zh" aria-pressed="true">中文</button>
+      <button type="button" data-set="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+
+  <!-- ===== toolbar ===== -->
+  <div class="bar toolbar">
+    <div class="tb-group">
+      <button class="tb" type="button" id="btn-prev" aria-label="上一个项目 / Previous project">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11 4 L4 10 L11 16 Z M17 4 L10 10 L17 16 Z" fill="none" stroke="#2a2a2a" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="tb run" type="button" id="btn-run">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4 L16 10 L6 16 Z" fill="#2a2a2a" stroke="#2a2a2a" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <span><span class="zh">运行</span><span class="en">Run</span></span>
+      </button>
+      <button class="tb" type="button" id="btn-next" aria-label="下一个项目 / Next project">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4 L10 10 L3 16 Z M9 4 L16 10 L9 16 Z" fill="none" stroke="#2a2a2a" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <span class="vsep" aria-hidden="true"></span>
+    <div class="now" aria-live="polite">
+      <b id="now-title"><span class="zh">韩天悦</span><span class="en">Tianyue Han</span></b>
+      <span class="prog" aria-hidden="true"><i id="now-prog"></i></span>
+    </div>
+    <label class="search">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.5" cy="6.5" r="4.5" fill="none" stroke="#2a2a2a" stroke-width="1.6"/><path d="M10 10l4 4" stroke="#2a2a2a" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input id="search" type="search" placeholder="搜索 / Search" autocomplete="off">
+    </label>
+  </div>
+
+  <!-- ===== workspace ===== -->
+  <div class="workspace">
+
+    <!-- explorer -->
+    <aside class="pane explorer">
+      <div class="sticky">
+        <div class="pane-head"><span><span class="zh">解决方案资源管理器</span><span class="en">Solution Explorer</span></span><span class="pin" aria-hidden="true">▾ ✕</span></div>
+        <ul class="tree" id="tree">
+          <li><div class="node sol"><svg><use href="#i-sln"/></svg><span><span class="zh">解决方案 "韩天悦"（1 个项目）</span><span class="en">Solution 'Tianyue Han' (1 project)</span></span></div></li>
+          <li><div class="node lvl1" data-tab="readme"><span class="caret">▾</span><svg><use href="#i-folder"/></svg><span><span class="zh">关于我</span><span class="en">About</span></span></div></li>
+          <li><div class="node lvl2" data-tab="readme"><svg><use href="#i-file"/></svg><span><span class="zh">README.md</span><span class="en">README.md</span></span></div></li>
+          <li><div class="node lvl1" data-tab="projects"><span class="caret">▾</span><svg><use href="#i-folder"/></svg><span><span class="zh">项目经历</span><span class="en">Projects</span></span></div></li>
+          <li><div class="node lvl2" data-tab="projects" data-p="0"><svg><use href="#i-py"/></svg><span><span class="zh">01 购物智能体.py</span><span class="en">01 shopping.py</span></span></div></li>
+          <li><div class="node lvl2" data-tab="projects" data-p="1"><svg><use href="#i-py"/></svg><span><span class="zh">02 蒸馏对比.py</span><span class="en">02 distillation.py</span></span></div></li>
+          <li><div class="node lvl2" data-tab="projects" data-p="2"><svg><use href="#i-py"/></svg><span><span class="zh">03 工具调用.py</span><span class="en">03 tool-use.py</span></span></div></li>
+          <li><div class="node lvl1" data-tab="comp"><span class="caret">▾</span><svg><use href="#i-folder"/></svg><span><span class="zh">竞赛</span><span class="en">Competitions</span></span></div></li>
+          <li><div class="node lvl2" data-tab="comp"><svg><use href="#i-file"/></svg><span><span class="zh">竞赛.md</span><span class="en">competitions.md</span></span></div></li>
+          <li><div class="node lvl1" data-tab="skills"><span class="caret">▾</span><svg><use href="#i-folder"/></svg><span><span class="zh">技能</span><span class="en">Skills</span></span></div></li>
+          <li><div class="node lvl2" data-tab="skills"><svg><use href="#i-file"/></svg><span><span class="zh">技能.md</span><span class="en">skills.md</span></span></div></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- editor -->
+    <main class="pane editor">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" data-tab="readme" aria-selected="true"><svg width="13" height="13" aria-hidden="true"><use href="#i-file"/></svg><span class="zh">README.md</span><span class="en">README.md</span><span class="x">✕</span></button>
+        <button class="tab" role="tab" data-tab="projects" data-p="0" aria-selected="false"><svg width="13" height="13" aria-hidden="true"><use href="#i-py"/></svg><span class="zh">01 购物智能体.py</span><span class="en">01 shopping.py</span><span class="x">✕</span></button>
+        <button class="tab" role="tab" data-tab="projects" data-p="1" aria-selected="false"><svg width="13" height="13" aria-hidden="true"><use href="#i-py"/></svg><span class="zh">02 蒸馏对比.py</span><span class="en">02 distillation.py</span><span class="x">✕</span></button>
+        <button class="tab" role="tab" data-tab="projects" data-p="2" aria-selected="false"><svg width="13" height="13" aria-hidden="true"><use href="#i-py"/></svg><span class="zh">03 工具调用.py</span><span class="en">03 tool-use.py</span><span class="x">✕</span></button>
+        <button class="tab" role="tab" data-tab="comp" aria-selected="false"><svg width="13" height="13" aria-hidden="true"><use href="#i-file"/></svg><span class="zh">竞赛.md</span><span class="en">competitions.md</span><span class="x">✕</span></button>
+        <button class="tab" role="tab" data-tab="skills" aria-selected="false"><svg width="13" height="13" aria-hidden="true"><use href="#i-file"/></svg><span class="zh">技能.md</span><span class="en">skills.md</span><span class="x">✕</span></button>
+      </div>
+
+      <!-- README -->
+      <section class="doc" id="doc-readme" role="tabpanel">
+        <h1><span class="zh">韩天悦</span><span class="en">Tianyue Han</span></h1>
+        <p class="role"><span class="zh">大模型后训练 · 2028 届 · 大模型算法实习</span><span class="en">LLM post-training · Class of 2028 · LLM algorithm intern</span></p>
+        <p class="lead"><span class="zh">Monash 人工智能硕士在读，做大模型后训练。过去一年在三个项目里完整跑通了从数据构建、监督微调、蒸馏到强化学习的流程，评测自己搭，数字自己核。正在找大模型算法实习，可立刻到岗。</span><span class="en">Master's student in AI at Monash, working on LLM post-training. Over the past year I took three projects end to end, from data construction and SFT through distillation and RL, building the evaluation and checking every number myself. Looking for an LLM algorithm internship, available now.</span></p>
+
+        <div class="sechead"><h2><span class="zh">教育背景</span><span class="en">Education</span></h2></div>
+        <div class="sec edu">
+          <div class="edu-item">
+            <svg class="ink" viewBox="0 0 100 100" aria-hidden="true">
+              <path class="white" d="M10 40 L50 24 L90 40 L50 56 Z"/>
+              <path d="M30 48 v14 q20 12 40 0 v-14"/>
+              <path class="thin" d="M90 40 v16"/><circle cx="90" cy="59" r="3"/>
+            </svg>
+            <div>
+              <h3><span class="zh">Monash University (QS:31)</span><span class="en">Monash University (QS 31)</span></h3>
+              <p><span class="zh">人工智能硕士 High Distinction（前 5%）</span><span class="en">Master of Artificial Intelligence — High Distinction (top 5%)</span></p>
+              <p class="when"><span class="zh">2027.10 毕业 · 2028 届</span><span class="en">Expected graduation Oct 2027</span></p>
+              <p class="note"><span class="zh">硕士论文（在投）：GDPR 框架下基于检索推理与知识蒸馏的 LLM 隐私声明披露审计系统</span><span class="en">Thesis (under review): advisory disclosure-sufficiency auditing of AI-vendor privacy policies under the GDPR</span></p>
+            </div>
+          </div>
+          <div class="edu-item">
+            <svg class="ink" viewBox="0 0 100 100" aria-hidden="true">
+              <path d="M8 62 q10 -10 20 0 t20 0 t20 0 t20 0"/>
+              <path class="thin" d="M8 76 q10 -10 20 0 t20 0 t20 0 t20 0"/>
+              <path class="white" d="M38 56 L62 56 L56 64 L44 64 Z"/>
+              <path d="M50 56 V26 L66 50 H50"/>
+              <path class="thin" d="M50 30 L38 50 H50"/>
+            </svg>
+            <div>
+              <h3><span class="zh">中国海洋大学 (985)</span><span class="en">Ocean University of China (Project 985)</span></h3>
+              <p><span class="zh">计算机科学与技术学士</span><span class="en">B.Eng. in Computer Science and Technology</span></p>
+              <p class="note"><span class="zh">核心课程：运筹学、概率论与数理统计、离散数学、数据结构与算法</span><span class="en">Core courses: operations research, probability &amp; statistics, discrete math, data structures &amp; algorithms</span></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact">
+          <span><span class="zh">可立刻到岗 · 每周 5 天线下 · 可连续实习 6 个月以上</span><span class="en">Available now · on-site 5 days a week · 6+ months</span></span>
+          <span><span class="zh">(+86) 182-6190-7886（微信同号）</span><span class="en">(+86) 182-6190-7886 (WeChat)</span></span>
+          <a href="mailto:berniwitty@outlook.com"><span class="zh">berniwitty@outlook.com</span><span class="en">berniwitty@outlook.com</span></a>
+        </div>
+      </section>
+
+      <!-- PROJECTS -->
+      <section class="doc" id="doc-projects" role="tabpanel" hidden>
+        <div class="flow-wrap">
+          <div class="flow" id="flow">
+            <div class="ghost g2" aria-hidden="true"></div><div class="ghost g1" aria-hidden="true"></div>
+            <div class="ghost g4" aria-hidden="true"></div><div class="ghost g3" aria-hidden="true"></div>
+
+            <!-- cover 1: bars -->
+            <div class="cover" data-p="0" role="button" tabindex="0">
+              <svg class="ink" viewBox="0 0 360 225" role="img" aria-label="单轮严格成功率柱状图：Qwen3-8B 直接 8.3%，论文 SFT 32.5%，SFT+GRPO 38.9%，GPT-5 零样本 40.8%，我的 SFT 45.5%">
+                <path d="M22 182 H342"/>
+                <rect class="white" x="30" y="157" width="44" height="25"/>
+                <rect class="hatched" x="92" y="84.5" width="44" height="97.5"/>
+                <rect class="hatched" x="154" y="65.3" width="44" height="116.7"/>
+                <rect class="hatched" x="216" y="59.6" width="44" height="122.4"/>
+                <rect class="solid" x="278" y="45.5" width="44" height="136.5"/>
+                <text class="val" x="52" y="150" text-anchor="middle">8.3</text>
+                <text class="val" x="114" y="77" text-anchor="middle">32.5</text>
+                <text class="val" x="176" y="58" text-anchor="middle">38.9</text>
+                <text class="val" x="238" y="52" text-anchor="middle">40.8</text>
+                <text class="big" x="300" y="38" text-anchor="middle">45.5</text>
+                <text class="lbl zh" x="52" y="199" text-anchor="middle">Qwen3-8B</text>
+                <text class="lbl zh" x="52" y="213" text-anchor="middle">直接跑</text>
+                <text class="lbl zh" x="114" y="199" text-anchor="middle">论文 SFT</text>
+                <text class="lbl zh" x="176" y="199" text-anchor="middle">SFT+GRPO</text>
+                <text class="lbl zh" x="238" y="199" text-anchor="middle">GPT-5</text>
+                <text class="lbl zh" x="238" y="213" text-anchor="middle">零样本</text>
+                <text class="lbl zh" x="300" y="199" text-anchor="middle">我的 SFT</text>
+                <text class="lbl en" x="52" y="199" text-anchor="middle">Qwen3-8B</text>
+                <text class="lbl en" x="52" y="213" text-anchor="middle">as-is</text>
+                <text class="lbl en" x="114" y="199" text-anchor="middle">paper SFT</text>
+                <text class="lbl en" x="176" y="199" text-anchor="middle">SFT+GRPO</text>
+                <text class="lbl en" x="238" y="199" text-anchor="middle">GPT-5</text>
+                <text class="lbl en" x="238" y="213" text-anchor="middle">zero-shot</text>
+                <text class="lbl en" x="300" y="199" text-anchor="middle">mine</text>
+              </svg>
+              <div class="cap"><span class="zh">官方单轮测试集 1,459 题，严格成功率（%）</span><span class="en">Official single-turn test set, 1,459 tasks, strict success (%)</span></div>
+            </div>
+
+            <!-- cover 2: grouped bars -->
+            <div class="cover" data-p="1" role="button" tabindex="0">
+              <svg class="ink" viewBox="0 0 360 225" role="img" aria-label="三个基准上的准确率：GSM8K 未训练 57.8、GRPO 77.2、在线蒸馏 82.3；MATH-500 42.4、64.6、68.0；OlympiadBench 17.4、30.7、34.9">
+                <path d="M22 182 H342"/>
+                <rect class="white" x="30" y="14" width="12" height="12"/><text class="lbl zh" x="47" y="25">未训练</text><text class="lbl en" x="47" y="25">base</text>
+                <rect class="hatched" x="110" y="14" width="12" height="12"/><text class="lbl zh" x="127" y="25">GRPO 250 步</text><text class="lbl en" x="127" y="25">GRPO, 250 steps</text>
+                <rect class="solid" x="230" y="14" width="12" height="12"/><text class="lbl zh" x="247" y="25">在线蒸馏 350 步</text><text class="lbl en" x="247" y="25">OPD, 350 steps</text>
+                <rect class="white" x="40" y="88.9" width="24" height="93.1"/>
+                <rect class="hatched" x="68" y="57.6" width="24" height="124.4"/>
+                <rect class="solid" x="96" y="49.4" width="24" height="132.6"/>
+                <text class="val" x="52" y="83" text-anchor="middle">57.8</text>
+                <text class="val" x="80" y="52" text-anchor="middle">77.2</text>
+                <text class="val" x="108" y="43" text-anchor="middle">82.3</text>
+                <text class="lbl" x="80" y="199" text-anchor="middle">GSM8K</text>
+                <rect class="white" x="150" y="113.7" width="24" height="68.3"/>
+                <rect class="hatched" x="178" y="77.9" width="24" height="104.1"/>
+                <rect class="solid" x="206" y="72.5" width="24" height="109.5"/>
+                <text class="val" x="162" y="108" text-anchor="middle">42.4</text>
+                <text class="val" x="190" y="72" text-anchor="middle">64.6</text>
+                <text class="val" x="218" y="66" text-anchor="middle">68.0</text>
+                <text class="lbl" x="190" y="199" text-anchor="middle">MATH-500</text>
+                <rect class="white" x="260" y="154" width="24" height="28"/>
+                <rect class="hatched" x="288" y="132.5" width="24" height="49.5"/>
+                <rect class="solid" x="316" y="125.8" width="24" height="56.2"/>
+                <text class="val" x="272" y="148" text-anchor="middle">17.4</text>
+                <text class="val" x="300" y="127" text-anchor="middle">30.7</text>
+                <text class="val" x="328" y="120" text-anchor="middle">34.9</text>
+                <text class="lbl" x="300" y="199" text-anchor="middle">OlympiadBench</text>
+                <text class="lbl zh" x="180" y="218" text-anchor="middle">难度从左到右递增 · 贪心解码准确率（%）</text>
+                <text class="lbl en" x="180" y="218" text-anchor="middle">difficulty increases left to right · greedy accuracy (%)</text>
+              </svg>
+              <div class="cap"><span class="zh">等活跃算力终点；三个基准全量测试集共 2,493 题；蒸馏臂为「GRPO 教师」那一条</span><span class="en">Endpoints at matched active compute; full test sets, 2,493 problems; the OPD arm shown uses the GRPO-trained teacher</span></div>
+            </div>
+
+            <!-- cover 3: tool loop -->
+            <div class="cover" data-p="2" role="button" tabindex="0">
+              <svg class="ink" viewBox="0 0 360 225" role="img" aria-label="循环：模型写代码，沙箱执行，读回输出，继续推理，最多 16 轮">
+                <g transform="translate(20 40)">
+                  <rect class="white" x="22" y="44" width="40" height="40" rx="6"/>
+                  <circle cx="35" cy="60" r="3"/><circle cx="49" cy="60" r="3"/><path class="thin" d="M34 72 q8 5 16 0"/>
+                  <path d="M42 44 v-8 m-4 0 h8"/>
+                  <path class="arrow" d="M66 64 H96"/>
+                  <rect class="white" x="100" y="36" width="96" height="56" rx="4"/>
+                  <text class="mono" x="108" y="54">x = solve(eq)</text>
+                  <text class="mono" x="108" y="70">print(x)</text>
+                  <text class="lbl zh" x="148" y="86" text-anchor="middle">推理中途写代码</text>
+                  <text class="lbl en" x="148" y="86" text-anchor="middle">code mid-reasoning</text>
+                  <path class="arrow" d="M200 64 H228"/>
+                  <rect class="white" x="232" y="34" width="72" height="60" rx="4"/>
+                  <circle cx="268" cy="58" r="10"/><circle cx="268" cy="58" r="4"/>
+                  <path class="thin" d="M268 44 v-4 M268 72 v4 M254 58 h-4 M282 58 h4 M258 48 l-3 -3 M278 48 l3 -3 M258 68 l-3 3 M278 68 l3 3"/>
+                  <text class="lbl zh" x="268" y="88" text-anchor="middle">沙箱真跑</text>
+                  <text class="lbl en" x="268" y="88" text-anchor="middle">sandbox</text>
+                  <path class="arrow" d="M268 98 V120 H42 V90"/>
+                  <text class="lbl zh" x="155" y="134" text-anchor="middle">读回输出继续推理 · 一条轨迹最多 16 轮</text>
+                  <text class="lbl en" x="155" y="134" text-anchor="middle">read the output back and continue · up to 16 turns</text>
+                  <text class="mono" x="176" y="114">out: 42</text>
+                </g>
+                <text class="big" x="180" y="30" text-anchor="middle">AIME +16.3</text>
+              </svg>
+              <div class="cap"><span class="zh">一条轨迹里发生的事</span><span class="en">What happens inside one trajectory</span></div>
+            </div>
+          </div>
+          <div class="scroller">
+            <button type="button" id="sc-prev" aria-label="上一个项目">◀</button>
+            <div class="track"><div class="thumb" id="sc-thumb"></div></div>
+            <button type="button" id="sc-next" aria-label="下一个项目">▶</button>
+          </div>
+        </div>
+
+        <!-- project 1 -->
+        <div class="pblock" data-p="0">
+          <p class="kicker"><span class="zh">多智能体蒸馏与数据飞轮后训练</span><span class="en">Multi-agent distillation &amp; data-flywheel post-training</span></p>
+          <h2><span class="zh">一个 8B 模型，在 ShopSimulator 上买对东西的严格成功率 45.5%，比 GPT-5 零样本的 40.8% 还高。</span><span class="en">An 8B model that out-shops GPT-5 zero-shot on ShopSimulator: 45.5% strict success against 40.8%.</span></h2>
+          <p class="stack"><span class="zh">LoRA SFT · 拒绝采样数据飞轮 · 教师蒸馏 · DPO · GiGPO · LLaMA-Factory · verl-agent · vLLM · LangGraph</span><span class="en">LoRA SFT · rejection-sampling data flywheel · teacher distillation · DPO · GiGPO · LLaMA-Factory · verl-agent · vLLM · LangGraph</span></p>
+          <p class="intro"><span class="zh">在 ShopSimulator benchmark 上对 Qwen3-8B 做后训练，同一评测下对比 SFT、决策点级 DPO 与多轮强化学习三条路线。任务分单轮与多轮个性化两类，多轮要主动追问才能问出用户没说出口的偏好；买到的商品类目、属性、规格、价格同时正确才计一次成功。</span><span class="en">Post-trained Qwen3-8B on the ShopSimulator benchmark, comparing SFT, decision-level DPO and multi-turn RL under one evaluation. A purchase counts as a success only when category, attribute, specification and price are all correct; multi-turn tasks additionally require asking back to surface unstated preferences.</span></p>
+          <table class="grid">
+            <thead><tr><th><span class="zh">要点</span><span class="en">Point</span></th><th><span class="zh">说明</span><span class="en">Details</span></th></tr></thead>
+            <tbody><tr class="searchable"><td class="pt"><span class="zh">四角色多智能体教师系统，多轮成功率从 12.0% 提到 27.3%</span><span class="en">Four-role multi-agent teacher, multi-turn success 12.0% to 27.3%</span></td><td><span class="zh">Qwen3-8B 直接执行任务只有单轮 8.3%、多轮个性化 12.0%；Planner 拆解需求并决定何时追问，Searcher 检索候选，Comparator 逐项比价，Verifier 下单前核对规格，整套系统随后用作产数据的教师。</span><span class="en">Qwen3-8B alone reaches 8.3% single-turn and 12.0% multi-turn. Planner decomposes the request and decides when to ask back, Searcher retrieves candidates, Comparator compares item by item, Verifier checks the specification before checkout; the system then serves as the teacher that produces data.</span></td></tr>
+<tr class="searchable"><td class="pt"><span class="zh">拒绝采样数据飞轮，单轮成功率从 8.3% 提到 26.0%</span><span class="en">Rejection-sampling data flywheel, single-turn success 8.3% to 26.0%</span></td><td><span class="zh">教师在训练任务上反复采样，环境返回的成交结果直接充当标签，只留类目、属性、规格、价格全部买对的轨迹，再丢弃含重复搜索、点击页面上没有的商品、靠系统兜底下单的轨迹，并控制商品类目与场景配比；入选轨迹把四个角色轮流输出的协作过程改写成单个 Qwen3-8B 策略的一条动作序列，做 LoRA SFT。</span><span class="en">The teacher samples repeatedly on training tasks with the environment's purchase outcome as the label, keeping only trajectories correct on all four attributes and dropping repeated searches, clicks on absent items and system-fallback orders; kept trajectories are rewritten from four-role collaboration into one Qwen3-8B action sequence for LoRA SFT.</span></td></tr>
+<tr class="searchable"><td class="pt"><span class="zh">重做数据过滤与 LoRA 配置，严格成功率提升 19.5 个点到 45.5%</span><span class="en">Reworked filtering and LoRA configuration, strict success +19.5 pts to 45.5%</span></td><td><span class="zh">第二轮飞轮停止涨分后排查数据，步数规则只保留短于中位数的轨迹，最难的任务被整批丢弃；放开后训练样本从 1,197 条增至 3,816 条，LoRA 从只训注意力层改成训全部线性层、秩 64 提到 128，官方单轮测试集 45.5%，同测试集同指标下基准论文的 SFT 为 32.5%、SFT 加 GRPO 38.9%、GPT-5 零样本 40.8%，装回多智能体系统后多轮个性化 41.3%。</span><span class="en">the step-count rule was keeping only shorter-than-median trajectories and discarding the hardest tasks; relaxing it grew training data from 1,197 to 3,816 samples, and LoRA moved from attention-only rank 64 to all linear layers at rank 128. Against the reference paper on the same test set: SFT 32.5%, SFT+GRPO 38.9%, GPT-5 zero-shot 40.8%; 41.3% multi-turn back inside the multi-agent system.</span></td></tr>
+<tr class="searchable"><td class="pt"><span class="zh">消融归因，数据约 8 个点、容量约 11 个点</span><span class="en">Ablation: about 8 pts from data, 11 pts from capacity</span></td><td><span class="zh">同一批数据只把 LoRA 退回注意力层秩 64，成绩回落到 34.1%，两项缺一不可；样本再扩到 4,982 条成绩持平，上限来自单条轨迹 24K token 的上下文，最长的轨迹装不进训练。</span><span class="en">reverting LoRA to attention-only rank 64 on the same data falls back to 34.1%, so neither alone accounts for the gain; expanding to 4,982 samples holds flat — the ceiling is the 24K-token context.</span></td></tr>
+<tr class="searchable"><td class="pt"><span class="zh">三条后训练路线对比，按每 GPU 小时收益选型</span><span class="en">Three post-training routes compared, selected by return per GPU-hour</span></td><td><span class="zh">数据触顶后转向偏好学习与强化学习：以同一决策点上不同动作能否成交为判据，构造 4,130 条偏好对训练 DPO，在 verl-agent 上搭出 GiGPO 多轮强化学习管线；GiGPO 单卡每步 110 分钟，同期 SFT 每 GPU 小时约换来 4 个百分点。</span><span class="en">with data saturated, built 4,130 decision-level preference pairs for DPO and a GiGPO multi-turn RL pipeline on verl-agent; GiGPO cost 110 minutes per step on one GPU, while SFT was still returning about 4 pts per GPU-hour.</span></td></tr></tbody>
+          </table>
+          <div class="sechead"><h2><span class="zh">图解</span><span class="en">Figures</span></h2></div>
+          <div class="figs">
+            <figure>
+              <svg class="ink" viewBox="-10 0 350 130" role="img" aria-label="四个角色：规划、检索、比价、核对">
+                <circle cx="45" cy="28" r="11"/><path d="M45 39 V70 M45 48 L30 62 M45 48 L58 52 M45 70 L34 95 M45 70 L56 95"/>
+                <rect class="white" x="56" y="40" width="20" height="26" rx="2"/><path class="thin" d="M60 48 h12 M60 54 h12 M60 60 h8"/>
+                <path class="thin" d="M40 26 q2 2 4 0 M47 26 q2 2 4 0"/>
+                <circle cx="130" cy="28" r="11"/><path d="M130 39 V70 M130 48 L146 46 M130 48 L116 62 M130 70 L119 95 M130 70 L141 95"/>
+                <circle class="white" cx="154" cy="42" r="9"/><path d="M160 49 L170 59"/>
+                <path class="thin" d="M125 26 q2 2 4 0 M132 26 q2 2 4 0"/>
+                <circle cx="215" cy="28" r="11"/><path d="M215 39 V70 M215 48 L235 44 M215 48 L200 62 M215 70 L204 95 M215 70 L226 95"/>
+                <path d="M238 34 V58 M224 38 H252"/>
+                <path class="thin" d="M224 38 L219 50 M224 38 L229 50 M252 38 L247 50 M252 38 L257 50"/>
+                <path d="M217 50 h14 M245 50 h14"/>
+                <path class="thin" d="M210 26 q2 2 4 0 M217 26 q2 2 4 0"/>
+                <circle cx="300" cy="28" r="11"/><path d="M300 39 V70 M300 48 L282 50 M300 48 L314 62 M300 70 L289 95 M300 70 L311 95"/>
+                <circle class="white" cx="274" cy="52" r="10"/><path d="M269 52 l4 4 l7 -8"/>
+                <path class="thin" d="M295 26 q2 2 4 0 M302 26 q2 2 4 0"/>
+                <text class="lbl zh" x="45" y="118" text-anchor="middle">Planner 拆解追问</text>
+                <text class="lbl zh" x="130" y="118" text-anchor="middle">Searcher 检索</text>
+                <text class="lbl zh" x="215" y="118" text-anchor="middle">Comparator 比价</text>
+                <text class="lbl zh" x="300" y="118" text-anchor="middle">Verifier 核对</text>
+                <text class="lbl en" x="45" y="118" text-anchor="middle">Planner</text>
+                <text class="lbl en" x="130" y="118" text-anchor="middle">Searcher</text>
+                <text class="lbl en" x="215" y="118" text-anchor="middle">Comparator</text>
+                <text class="lbl en" x="300" y="118" text-anchor="middle">Verifier</text>
+              </svg>
+              <figcaption><b><span class="zh">先造一个教师</span><span class="en">First, build a teacher</span></b><span class="zh">Qwen3-8B 独自做多轮任务只有 12.0%。四个角色分工后到 27.3%，这套系统随后专门用来产数据。</span><span class="en">Qwen3-8B alone reaches 12.0% on multi-turn tasks. Split into four roles it reaches 27.3%, and that system then exists to produce data.</span></figcaption>
+            </figure>
+            <figure>
+              <svg class="ink" viewBox="-15 0 290 240" role="img" aria-label="数据飞轮：教师采样、环境判分、过滤改写、学生训练，循环">
+                <path class="arrow" d="M159.6 56.6 A70 70 0 0 1 193.4 90.4"/>
+                <path class="arrow" d="M193.4 149.6 A70 70 0 0 1 159.6 183.4"/>
+                <path class="arrow" d="M100.4 183.4 A70 70 0 0 1 66.6 149.6"/>
+                <path class="arrow" d="M66.6 90.4 A70 70 0 0 1 100.4 56.6"/>
+                <circle class="white" cx="130" cy="40" r="16"/><path d="M130 30 l8 4 v9 l-8 4 l-8 -4 v-9 z" class="thin"/>
+                <text class="lbl zh" x="130" y="12" text-anchor="middle">多智能体教师反复采样</text>
+                <text class="lbl en" x="130" y="12" text-anchor="middle">teacher samples repeatedly</text>
+                <circle class="white" cx="200" cy="120" r="16"/><path d="M193 120 l5 5 l9 -10"/>
+                <text class="lbl zh" x="224" y="110">环境判分</text><text class="lbl zh" x="224" y="126">只留全对</text>
+                <text class="lbl en" x="222" y="110">env grades</text><text class="lbl en" x="222" y="126">keep correct</text>
+                <circle class="white" cx="130" cy="200" r="16"/><path d="M121 193 h18 l-6 7 v7 h-6 v-7 z" class="thin"/>
+                <text class="lbl zh" x="130" y="232" text-anchor="middle">丢掉无效动作，改写成单策略轨迹</text>
+                <text class="lbl en" x="130" y="232" text-anchor="middle">drop bad actions, rewrite as one policy</text>
+                <circle class="white" cx="60" cy="120" r="16"/><circle cx="60" cy="115" r="5"/><path d="M52 130 q8 -8 16 0" class="thin"/>
+                <text class="lbl zh" x="38" y="110" text-anchor="end">学生</text><text class="lbl zh" x="38" y="126" text-anchor="end">LoRA SFT</text>
+                <text class="lbl en" x="38" y="110" text-anchor="end">student</text><text class="lbl en" x="38" y="126" text-anchor="end">LoRA SFT</text>
+                <text class="mid zh" x="130" y="126" text-anchor="middle">再转一圈</text>
+                <text class="mid en" x="130" y="126" text-anchor="middle">and again</text>
+              </svg>
+              <figcaption><b><span class="zh">再让数据自己转起来</span><span class="en">Then let the data spin</span></b><span class="zh">成交结果直接当标签。两圈之后单轮成功率 8.3% 到 26.0%；放开过滤、加大 LoRA 容量后到 45.5%。</span><span class="en">The purchase outcome is the label. Two turns take single-turn success from 8.3% to 26.0%; relaxed filtering and more LoRA capacity take it to 45.5%.</span></figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <!-- project 2 -->
+        <div class="pblock" data-p="1" hidden>
+          <p class="kicker"><span class="zh">数学推理模型后训练 · 强化学习 vs 在线蒸馏</span><span class="en">Math-reasoning post-training · RL vs. on-policy distillation</span></p>
+          <h2><span class="zh">等算力下，在线蒸馏训 50 步就超过了 GRPO 跑满 250 步的终点；三个基准都赢，比未训练的学生高 17 到 26 个点。</span><span class="en">At matched compute, on-policy distillation passes GRPO's 250-step endpoint by step 50, wins on all three benchmarks, and lifts the student by 17 to 26 pts.</span></h2>
+          <p class="stack"><span class="zh">RLVR · GRPO · OPD · Reverse KL · verl · vLLM · FSDP · Ray · PyTorch</span><span class="en">RLVR · GRPO · OPD · Reverse KL · verl · vLLM · FSDP · Ray · PyTorch</span></p>
+          <p class="intro"><span class="zh">GRPO 与 OPD 缺少等算力下的直接对照。本项目面向数学推理任务，在同一份训练集（DAPO-Math-17K）与同一评测口径下补上该对照，并进一步回答蒸馏路线下教师选择的依据。</span><span class="en">GRPO and OPD lacked a direct comparison at matched compute. This project supplies one for math reasoning under a single training set (DAPO-Math-17K) and one evaluation protocol, and further answers how to choose a distillation teacher.</span></p>
+          <table class="grid">
+            <thead><tr><th><span class="zh">要点</span><span class="en">Point</span></th><th><span class="zh">说明</span><span class="en">Details</span></th></tr></thead>
+            <tbody><tr class="searchable"><td class="pt"><span class="zh">基于 verl 实现 OPD 与 GRPO 双路线，核心差异是监督信号密度</span><span class="en">Both routes built on verl; the difference is supervision density</span></td><td><span class="zh">OPD 的监督信号是学生自采样序列上逐 token 的反向 KL 值，由教师对数概率算得，以策略梯度回传。GRPO 的监督信号是 math-verify 判定整条回答正误的一个标量。区别在于密度：前者一条回答上千个逐位置信号，后者一个标量摊给全部 token。</span><span class="en">OPD supervises every token of the student's own sampled sequence with a reverse-KL value from teacher log-probs, back-propagated as a policy gradient; GRPO supplies one math-verify scalar per answer — thousands of per-position signals versus one scalar spread over all tokens.</span></td></tr>
+<tr class="searchable"><td class="pt"><span class="zh">等活跃算力下 OPD 三个基准准确率均高于 GRPO，50 步即超其 250 步终点准确率</span><span class="en">At matched active compute OPD beats GRPO on all three benchmarks, passing GRPO's 250-step endpoint by step 50</span></td><td><span class="zh">准确率相对未训练的学生模型提升 17 至 26 个百分点。活跃算力按实测 GPU 利用率折算对齐；评测协议自建、独立于训练框架，覆盖三个难度递增的数学基准（GSM8K / MATH-500 / Olympiad-Bench）全量测试集共 2493 题，并做配对显著性检验。</span><span class="en">+17 to +26 pts over the untrained student. Active compute aligned by measured GPU utilization; the evaluation protocol is self-built and framework-independent, covering the full GSM8K / MATH-500 / OlympiadBench sets (2,493 problems) with paired significance tests.</span></td></tr>
+<tr class="searchable"><td class="pt"><span class="zh">同源准确率相近的双教师对照：与学生路径一致者蒸出的学生准确率更高，差距随难度递增</span><span class="en">Two same-origin teachers of near-equal accuracy: the route-matched one distills better, and the gap grows with difficulty</span></td><td><span class="zh">两个教师同出自 Qwen3-4B-Base、自身基准准确率仅相差 2.2 个百分点，区别只在后训练路径：一个跳过 SFT 直接做单域数学强化学习，与学生路径一致；另一个是经多阶段通用后训练的 Qwen3-4B 指令模型。该差距至最难的基准达到统计显著，训练首步两个教师在学生序列上逐 token 对数概率差的均值即相差 1.6 倍，通用后训练的教师离学生的分布更远。</span><span class="en">both come from Qwen3-4B-Base and differ by 2.2 pts on their own benchmarks; one skipped SFT and did single-domain math RL, matching the student's route, the other is the multi-stage post-trained instruct model. The gap reaches significance on the hardest benchmark, and at the first step their mean per-token log-prob gap on student sequences already differs by 1.6x.</span></td></tr></tbody>
+          </table>
+          <div class="sechead"><h2><span class="zh">图解</span><span class="en">Figures</span></h2></div>
+          <div class="figs">
+            <figure>
+              <svg class="ink" viewBox="0 0 320 120" role="img" aria-label="监督信号密度：在线蒸馏每个 token 一个信号，GRPO 整条回答一个标量">
+                <text class="mid" x="8" y="44">OPD</text>
+                <g>
+                  <path class="arrow thin" d="M69 12 V26"/><path class="arrow thin" d="M90 8 V26"/><path class="arrow thin" d="M111 16 V26"/><path class="arrow thin" d="M132 6 V26"/><path class="arrow thin" d="M153 14 V26"/><path class="arrow thin" d="M174 10 V26"/><path class="arrow thin" d="M195 18 V26"/><path class="arrow thin" d="M216 8 V26"/><path class="arrow thin" d="M237 13 V26"/><path class="arrow thin" d="M258 6 V26"/><path class="arrow thin" d="M279 15 V26"/><path class="arrow thin" d="M300 11 V26"/>
+                </g>
+                <g>
+                  <rect class="white" x="60" y="30" width="18" height="16"/><rect class="white" x="81" y="30" width="18" height="16"/><rect class="white" x="102" y="30" width="18" height="16"/><rect class="white" x="123" y="30" width="18" height="16"/><rect class="white" x="144" y="30" width="18" height="16"/><rect class="white" x="165" y="30" width="18" height="16"/><rect class="white" x="186" y="30" width="18" height="16"/><rect class="white" x="207" y="30" width="18" height="16"/><rect class="white" x="228" y="30" width="18" height="16"/><rect class="white" x="249" y="30" width="18" height="16"/><rect class="white" x="270" y="30" width="18" height="16"/><rect class="white" x="291" y="30" width="18" height="16"/>
+                </g>
+                <text class="mid" x="8" y="100">GRPO</text>
+                <path class="thin" d="M60 76 V70 H309 V76"/>
+                <path class="arrow thin" d="M184 56 V68"/>
+                <text class="val" x="184" y="52" text-anchor="middle">✓ / ✗</text>
+                <g>
+                  <rect class="white" x="60" y="82" width="18" height="16"/><rect class="white" x="81" y="82" width="18" height="16"/><rect class="white" x="102" y="82" width="18" height="16"/><rect class="white" x="123" y="82" width="18" height="16"/><rect class="white" x="144" y="82" width="18" height="16"/><rect class="white" x="165" y="82" width="18" height="16"/><rect class="white" x="186" y="82" width="18" height="16"/><rect class="white" x="207" y="82" width="18" height="16"/><rect class="white" x="228" y="82" width="18" height="16"/><rect class="white" x="249" y="82" width="18" height="16"/><rect class="white" x="270" y="82" width="18" height="16"/><rect class="white" x="291" y="82" width="18" height="16"/>
+                </g>
+                <text class="lbl zh" x="184" y="114" text-anchor="middle">同一条回答的 token</text>
+                <text class="lbl en" x="184" y="114" text-anchor="middle">tokens of one answer</text>
+              </svg>
+              <figcaption><b><span class="zh">为什么快：监督信号的密度</span><span class="en">Why it is faster: supervision density</span></b><span class="zh">在线蒸馏在学生自己采样的每个 token 上都有教师的反向 KL 信号；GRPO 只有判分器给整条回答的一个对错标量，摊给全部 token。</span><span class="en">OPD gets a reverse-KL signal from the teacher on every token the student samples; GRPO gets one right-or-wrong scalar per answer, spread over all tokens.</span></figcaption>
+            </figure>
+            <figure>
+              <svg class="ink" viewBox="0 0 320 130" role="img" aria-label="同源双教师的蒸馏差距随难度增大：GSM8K −1.2、MATH-500 +2.8、OlympiadBench +5.8 个百分点">
+                <path d="M20 122 V96 H110 V64 H200 V32 H300 V122"/>
+                <text class="lbl" x="65" y="112" text-anchor="middle">GSM8K</text>
+                <text class="lbl" x="155" y="80" text-anchor="middle">MATH-500</text>
+                <text class="lbl" x="250" y="48" text-anchor="middle">Olympiad</text>
+                <text class="mid" x="65" y="88" text-anchor="middle">−1.2</text>
+                <text class="mid" x="155" y="56" text-anchor="middle">+2.8</text>
+                <text class="big" x="250" y="24" text-anchor="middle">+5.8</text>
+                <circle cx="284" cy="8" r="5"/><path class="thin" d="M284 13 V24 M284 17 L278 22 M284 17 L290 21 M284 24 L280 32 M284 24 L289 32"/>
+                <path class="dash" d="M20 122 H300"/>
+              </svg>
+              <figcaption><b><span class="zh">教师怎么选：路径比分数更说明问题</span><span class="en">Choosing a teacher: lineage over score</span></b><span class="zh">两个教师同出自 Qwen3-4B-Base、分数只差 2.2 个点。和学生一样只做过数学强化学习的那个，蒸出的学生在难题上更强，差距随难度递增。</span><span class="en">Both teachers come from Qwen3-4B-Base and differ by 2.2 pts. The one that, like the student, only went through math RL distills a stronger student on hard problems, and the gap grows with difficulty.</span></figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <!-- project 3 -->
+        <div class="pblock" data-p="2" hidden>
+          <p class="kicker"><span class="zh">多轮工具调用智能体 · Agentic RL 训练与评测 · 2026.07</span><span class="en">Multi-turn tool-use agent · agentic RL training &amp; evaluation · Jul 2026</span></p>
+          <h2><span class="zh">让模型在推理中途自己写 Python、沙箱真跑、读回结果再想，最多 16 轮。只用全量 1.4% 的训练量，AIME 共提升 16.3 个点。</span><span class="en">The model writes Python mid-reasoning, a sandbox runs it, and it reads the output back, up to 16 turns. With 1.4% of the full training volume, AIME rose 16.3 pts.</span></h2>
+          <p class="stack"><span class="zh">GRPO · DAPO · RLVR · Agentic RL · SFT · verl · vLLM · Ray · FSDP · PyTorch</span><span class="en">GRPO · DAPO · RLVR · Agentic RL · SFT · verl · vLLM · Ray · FSDP · PyTorch</span></p>
+          <p class="intro"><span class="zh">面向数学推理构建多轮工具调用智能体的完整后训练流程：基座模型 → 工具调用监督微调 → 强化学习。模型在推理途中自主发出 Python 代码，由沙箱执行后读取输出继续推理，单条轨迹最多 16 轮。</span><span class="en">Built the full post-training pipeline of a multi-turn tool-use agent for math reasoning: base model, tool-use SFT, then RL. The model emits Python mid-reasoning, a sandbox executes it and the output is read back to continue, up to 16 turns per trajectory.</span></p>
+          <table class="grid">
+            <thead><tr><th><span class="zh">要点</span><span class="en">Point</span></th><th><span class="zh">说明</span><span class="en">Details</span></th></tr></thead>
+            <tbody><tr class="searchable"><td class="pt"><span class="zh">监督微调：沙箱真实执行的 6K 条轨迹经过程奖励筛至 3K，构建强化学习起点</span><span class="en">SFT: 6K sandbox-executed trajectories filtered to 3K by process reward, giving the RL starting point</span></td><td><span class="zh">轨迹数据：以 Qwen3-Coder-30B 为教师，在沙箱中真实运行代码、读回输出继续推理，端到端产出 6K 条多轮工具调用轨迹，再用过程奖励模型 ReasonFlux-PRM 打分排序保留 3K 条；以此全参微调 Qwen3-4B-Instruct-2507，得到具备多轮工具调用能力的强化学习起点模型。</span><span class="en">Trajectory data: with Qwen3-Coder-30B as the teacher, code was really executed in the sandbox and its output read back to continue reasoning, producing 6K multi-turn trajectories end to end; ReasonFlux-PRM scored and ranked them down to 3K, which fully fine-tuned Qwen3-4B-Instruct-2507 into a starting model with multi-turn tool-use ability.</span></td></tr>
+<tr class="searchable"><td class="pt"><span class="zh">强化学习数据：分层采样使代码题占比由 14% 提至 42%，让工具使用质量进入奖励</span><span class="en">RL data: stratified sampling lifts code problems from 14% to 42%, putting tool-use quality into the reward</span></td><td><span class="zh">推理题库数据：30K 道，由 17.9K 道竞赛数学题、4.9K 道通用数学题、4.3K 道代码题与 3.0K 道科学题混合而成，以避免单一题型使策略收窄到固定解法。训练集数据：依奖励判定方式分层采样 600 道——数学题的奖励只看最终答案是否匹配，模型是否调用工具、代码是否跑通均不进入奖励；代码题的奖励则由沙箱执行单元测试的结果直接决定。代码题在题库中仅占 14%、随机采样下三成批次抽不到，分层提升至 42% 使其稳定进入每步更新。</span><span class="en">Problem pool: 30K items — 17.9K competition math, 4.9K general math, 4.3K code, 3.0K science — mixed so no single type narrows the policy to one solution pattern. Training set: 600 items stratified by how the reward is judged; math rewards check only the final answer, ignoring whether tools were called, while code rewards come from sandbox unit tests. Code problems are 14% of the pool and missing from three in ten batches under random sampling, so lifting them to 42% keeps them in every update.</span></td></tr>
+<tr class="searchable"><td class="pt"><span class="zh">评测与成果：AIME 测试集上共提升 16.3 个百分点，训练量仅为全量的 1.4%</span><span class="en">Results: +16.3 pts in total on the AIME test sets, using 1.4% of the full training volume</span></td><td><span class="zh">在 AIME2024、AIME2025 各 30 题上评测，每题独立作答 16 次、合计 960 次采样。</span><span class="en">Evaluated on AIME2024 and AIME2025, 30 problems each, 16 independent runs per problem, 960 samples in total.</span></td></tr></tbody>
+          </table>
+          <div class="sechead"><h2><span class="zh">图解</span><span class="en">Figures</span></h2></div>
+          <div class="figs">
+            <figure>
+              <svg class="ink" viewBox="0 0 320 130" role="img" aria-label="数据漏斗：6K 条沙箱轨迹经过程奖励模型筛到 3K，全参微调得到强化学习起点">
+                <path d="M20 10 H300 L215 78 V118 L105 126 V78 Z"/>
+                <text class="mid" x="160" y="36" text-anchor="middle">6K</text>
+                <text class="lbl zh" x="160" y="54" text-anchor="middle">沙箱真实执行的多轮轨迹</text>
+                <text class="lbl en" x="160" y="54" text-anchor="middle">sandbox-executed trajectories</text>
+                <text class="mid" x="160" y="100" text-anchor="middle">3K</text>
+                <text class="lbl zh" x="160" y="115" text-anchor="middle">过程奖励打分留下</text>
+                <text class="lbl en" x="160" y="115" text-anchor="middle">kept by process reward</text>
+                <text class="lbl zh" x="224" y="94">教师 Qwen3-Coder-30B</text><text class="lbl en" x="224" y="94">teacher: Qwen3-Coder-30B</text>
+                <text class="lbl" x="224" y="112">PRM: ReasonFlux-PRM</text>
+              </svg>
+              <figcaption><b><span class="zh">先教会它用工具</span><span class="en">First, teach it to use tools</span></b><span class="zh">教师在沙箱里真跑代码、读回输出继续推理，产出 6K 条轨迹；过程奖励模型打分排序留 3K 条，全参微调 Qwen3-4B 得到强化学习的起点。</span><span class="en">The teacher really runs code in the sandbox and reads the output back, producing 6K trajectories; a process reward model ranks them down to 3K, and full fine-tuning of Qwen3-4B gives the RL starting point.</span></figcaption>
+            </figure>
+            <figure>
+              <svg class="ink" viewBox="0 0 320 130" role="img" aria-label="分层采样：题库中代码题占 14%，训练集里提到 42%">
+                <path d="M24 30 h84 v82 q0 8 -8 8 h-68 q-8 0 -8 -8 z"/>
+                <path class="thin" d="M30 22 h72"/>
+                <rect class="hatched" x="24" y="98" width="84" height="22"/>
+                <text class="val" x="66" y="60" text-anchor="middle">30K</text>
+                <text class="lbl zh" x="66" y="76" text-anchor="middle">题库</text><text class="lbl en" x="66" y="76" text-anchor="middle">pool</text>
+                <text class="val" x="66" y="94" text-anchor="middle">14%</text>
+                <path class="arrow" d="M118 74 H166"/>
+                <text class="lbl zh" x="142" y="66" text-anchor="middle">分层采样</text>
+                <text class="lbl en" x="142" y="66" text-anchor="middle">stratified</text>
+                <path d="M176 30 h84 v82 q0 8 -8 8 h-68 q-8 0 -8 -8 z"/>
+                <path class="thin" d="M182 22 h72"/>
+                <rect class="hatched" x="176" y="64" width="84" height="56"/>
+                <text class="lbl zh" x="218" y="44" text-anchor="middle">训练集</text><text class="lbl en" x="218" y="44" text-anchor="middle">train set</text>
+                <text class="val" x="218" y="59" text-anchor="middle">600</text>
+                <text class="big" x="218" y="100" text-anchor="middle" style="fill:#fff;paint-order:stroke;stroke:#2a2a2a;stroke-width:4px">42%</text>
+                <rect class="hatched" x="272" y="66" width="12" height="12"/>
+                <text class="lbl zh" x="288" y="76">代码题</text><text class="lbl en" x="288" y="76">code</text>
+                <text class="lbl zh" x="272" y="96">奖励来自</text><text class="lbl zh" x="272" y="110">单元测试</text>
+                <text class="lbl en" x="272" y="96">reward =</text><text class="lbl en" x="272" y="110">unit tests</text>
+              </svg>
+              <figcaption><b><span class="zh">再让工具质量进入奖励</span><span class="en">Then put tool quality into the reward</span></b><span class="zh">数学题的奖励只看最终答案，工具用没用不进奖励；代码题的奖励由沙箱单元测试直接决定。代码题在题库里只占 14%，随机采样三成批次抽不到，分层提到 42% 让它稳定进入每步更新。</span><span class="en">Math rewards check only the final answer, so tool use is invisible to them; code rewards come straight from sandbox unit tests. Code is 14% of the pool and missing from three in ten random batches, so stratifying it to 42% keeps it in every update.</span></figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- COMPETITIONS -->
+      <section class="doc" id="doc-comp" role="tabpanel" hidden>
+        <div class="sechead"><h2><span class="zh">竞赛</span><span class="en">Competitions</span></h2><small><span class="zh">多智能体规划与博弈</span><span class="en">Multi-agent planning &amp; games</span></small></div>
+        <div class="sec cards"><article class="card searchable"><header><h3><span class="zh">Pacman 多智能体对战系统</span><span class="en">Pacman multi-agent contest</span></h3><span class="rank"><span class="zh">排名 11 / 298</span><span class="en">Rank 11 / 298</span></span></header><ul class="blist"><li><b><span class="zh">赛制</span><span class="en">Format</span></b><span class="zh">2v2 对战，名次按所有参赛队两两对战的胜率排定。</span><span class="en">2v2 matches, ranked by pairwise win rate against every other team.</span></li><li><b><span class="zh">高层规划</span><span class="en">High-level planning</span></b><span class="zh">PDDL 把局面抽象成符号谓词与目标，在保守进攻、激进进攻、边界巡逻、追击入侵者、位置重排之间切换，依据是风险、比分、携带食物和地图控制。</span><span class="en">PDDL abstracts the board into predicates and goals, switching between conservative attack, aggressive attack, border patrol, chasing invaders and repositioning, based on risk, score, carried food and map control.</span></li><li><b><span class="zh">低层执行</span><span class="en">Low-level execution</span></b><span class="zh">A* 路径搜索，启发式里加入避开对手危险区、回家路径安全评估和边界约束。</span><span class="en">A* path search with heuristics for opponent danger zones, safe-return evaluation and border constraints.</span></li><li><b><span class="zh">兜底策略</span><span class="en">Fallback</span></b><span class="zh">规划失败或时间不足时，退回基于得分变化与距离特征的 Q-learning，保证整体稳定。</span><span class="en">When planning fails or time runs out, a Q-learning policy on score-change and distance features keeps behaviour stable.</span></li><li><b><span class="zh">多智能体协同</span><span class="en">Coordination</span></b><span class="zh">每个智能体把意图、目标、危险等级、已认领的食物和边界站位写进共享信息表，因此不会抢同一份食物，防守位自动分配，还能吃能量豆去救队友。</span><span class="en">Each agent writes its intent, target, danger level, claimed food and border post into a shared table, so agents never contest the same food, split border defence automatically and rescue teammates with power pellets.</span></li></ul></article>
+<article class="card searchable"><header><h3><span class="zh">Flatland 多智能体铁路调度系统</span><span class="en">Flatland multi-agent railway scheduling</span></h3><span class="rank"><span class="zh">排名 14 / 315</span><span class="en">Rank 14 / 315</span></span></header><ul class="blist"><li><b><span class="zh">评分口径</span><span class="en">Scoring</span></b><span class="zh">名次按所有地图、所有列车数量下的按时到达比例与所需时间步排定。</span><span class="en">Ranked by on-time arrival rate and time steps across all maps and train counts.</span></li><li><b><span class="zh">调度顺序</span><span class="en">Scheduling order</span></b><span class="zh">按每列车距截止时间的时间余量计算紧迫度，余量小的先排。</span><span class="en">Trains are ordered by slack to their deadlines, the tightest first.</span></li><li><b><span class="zh">路径规划</span><span class="en">Path planning</span></b><span class="zh">安全区间路径规划（SIPP）把搜索状态扩展为「位置 + 方向 + 所在安全时间段」，安全时间段由已规划路径的时间占用表合并空闲区间得到，配曼哈顿距离启发式，避免节点碰撞与对向交换冲突。</span><span class="en">Safe-Interval Path Planning expands each state into position, direction and safe interval, where intervals come from merging free slots in an occupancy table over planned paths; a Manhattan-distance heuristic avoids node collisions and head-on swaps.</span></li><li><b><span class="zh">结构约束</span><span class="en">Structural constraints</span></b><span class="zh">死胡同轨道只在作为起终点或已被占用时允许进入；先带结构约束规划，失败再放宽约束兜底，在高密度路网里兼顾可解率与搜索效率。</span><span class="en">Dead-end tracks are entered only as origin, destination or when already occupied; a constrained-first, relaxed-fallback two-stage plan balances solvability against search cost on dense networks.</span></li><li><b><span class="zh">故障重规划</span><span class="en">Malfunction handling</span></b><span class="zh">故障发生时保留所有列车已执行的轨迹前缀，只对受影响的列车做局部重规划，避免全局重算超时和内存爆炸。</span><span class="en">Executed trajectory prefixes are kept and only affected trains are re-planned locally, avoiding global re-computation timeouts and memory blowups.</span></li></ul></article></div>
+      </section>
+
+      <!-- SKILLS -->
+      <section class="doc" id="doc-skills" role="tabpanel" hidden>
+        <div class="sechead"><h2><span class="zh">技能</span><span class="en">Skills</span></h2></div>
+        <div class="sec">
+          <div class="skill-row searchable"><div class="lab"><span class="zh">后训练方法</span><span class="en">Post-training</span></div><ul class="tags zh"><li>LoRA / 全参 SFT</li><li>DPO</li><li>GRPO / DAPO</li><li>OPD · Reverse KL</li><li>GiGPO</li><li>RLVR</li><li>拒绝采样数据飞轮</li></ul><ul class="tags en"><li>LoRA / full SFT</li><li>DPO</li><li>GRPO / DAPO</li><li>OPD · Reverse KL</li><li>GiGPO</li><li>RLVR</li><li>rejection-sampling flywheel</li></ul></div>
+          <div class="skill-row searchable"><div class="lab"><span class="zh">训练与推理框架</span><span class="en">Training &amp; serving</span></div><ul class="tags zh"><li>verl / verl-agent</li><li>LLaMA-Factory</li><li>vLLM</li><li>FSDP · Ray</li><li>Unsloth</li><li>SGLang</li><li>Ollama / llama.cpp</li></ul><ul class="tags en"><li>verl / verl-agent</li><li>LLaMA-Factory</li><li>vLLM</li><li>FSDP · Ray</li><li>Unsloth</li><li>SGLang</li><li>Ollama / llama.cpp</li></ul></div>
+          <div class="skill-row searchable"><div class="lab"><span class="zh">评测与实验管理</span><span class="en">Evaluation</span></div><ul class="tags zh"><li>LLM-as-a-Judge 去偏</li><li>无标注评测基准</li><li>配对显著性检验</li><li>过程奖励模型筛数据</li><li>泄漏审计</li><li>WandB / SwanLab</li></ul><ul class="tags en"><li>LLM-as-a-Judge de-biasing</li><li>unlabeled proxy benchmarks</li><li>paired significance tests</li><li>PRM data filtering</li><li>leakage audits</li><li>WandB / SwanLab</li></ul></div>
+          <div class="skill-row searchable"><div class="lab"><span class="zh">Agent 与工程</span><span class="en">Agents &amp; engineering</span></div><ul class="tags zh"><li>LangGraph</li><li>LangChain</li><li>MCP</li><li>Python</li><li>Linux · Git · Docker</li><li>AKS</li><li>Azure OpenAI Service</li><li>Azure Machine Learning</li></ul><ul class="tags en"><li>LangGraph</li><li>LangChain</li><li>MCP</li><li>Python</li><li>Linux · Git · Docker</li><li>AKS</li><li>Azure OpenAI Service</li><li>Azure Machine Learning</li></ul></div>
+          <div class="skill-row searchable"><div class="lab"><span class="zh">语言</span><span class="en">Languages</span></div><ul class="tags zh"><li>中文（母语）</li><li>英语（全英文授课与写作）</li></ul><ul class="tags en"><li>Mandarin (native)</li><li>English (full professional proficiency)</li></ul></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- properties -->
+    <aside class="pane props">
+      <div class="sticky">
+        <div class="pane-head"><span><span class="zh">属性</span><span class="en">Properties</span></span><span class="pin" aria-hidden="true">▾ ✕</span></div>
+        <div class="props-body">
+          <div class="props-sel"><span id="props-name"><span class="zh">README.md</span><span class="en">README.md</span></span><span class="arrow">▾</span></div>
+
+          <div class="props-block" data-sel="readme">
+            <table class="props">
+              <tr><th><span class="zh">姓名</span><span class="en">Name</span></th><td><span class="zh">韩天悦</span><span class="en">Tianyue Han</span></td></tr>
+              <tr><th><span class="zh">届别</span><span class="en">Class</span></th><td><span class="zh">2027.10 毕业 · 2028 届</span><span class="en">Expected graduation Oct 2027</span></td></tr>
+              <tr><th><span class="zh">到岗</span><span class="en">Availability</span></th><td><span class="zh">可立刻到岗 · 每周 5 天线下 · 可连续实习 6 个月以上</span><span class="en">Available now · on-site 5 days a week · 6+ months</span></td></tr>
+              <tr><th><span class="zh">电话</span><span class="en">Phone</span></th><td><span class="zh">(+86) 182-6190-7886（微信同号）</span><span class="en">(+86) 182-6190-7886 (WeChat)</span></td></tr>
+              <tr><th>Email</th><td><a href="mailto:berniwitty@outlook.com"><span class="zh">berniwitty@outlook.com</span><span class="en">berniwitty@outlook.com</span></a></td></tr>
+              <tr><th>GitHub</th><td></td></tr>
+            </table>
+          </div>
+          <div class="props-block" data-sel="p0" hidden><table class="props"><tr><th><span class="zh">基座模型</span><span class="en">Base model</span></th><td><span class="zh">Qwen3-8B</span><span class="en">Qwen3-8B</span></td></tr>
+<tr><th><span class="zh">基准</span><span class="en">Benchmark</span></th><td><span class="zh">ShopSimulator</span><span class="en">ShopSimulator</span></td></tr>
+<tr><th><span class="zh">指标</span><span class="en">Metric</span></th><td><span class="zh">严格成功率（四项全对）</span><span class="en">strict success (all four attributes)</span></td></tr>
+<tr><th><span class="zh">结果</span><span class="en">Result</span></th><td><span class="zh">45.5%，GPT-5 零样本 40.8%</span><span class="en">45.5% vs GPT-5 zero-shot 40.8%</span></td></tr>
+<tr><th><span class="zh">主方法</span><span class="en">Main method</span></th><td><span class="zh">多智能体教师 + 数据飞轮 + LoRA SFT</span><span class="en">multi-agent teacher + data flywheel + LoRA SFT</span></td></tr>
+<tr><th><span class="zh">对照路线</span><span class="en">Compared against</span></th><td><span class="zh">决策点级 DPO、GiGPO</span><span class="en">decision-level DPO, GiGPO</span></td></tr>
+<tr><th><span class="zh">框架</span><span class="en">Frameworks</span></th><td><span class="zh">LLaMA-Factory、verl-agent、vLLM、LangGraph</span><span class="en">LLaMA-Factory, verl-agent, vLLM, LangGraph</span></td></tr></table></div>
+          <div class="props-block" data-sel="p1" hidden><table class="props"><tr><th><span class="zh">学生</span><span class="en">Student</span></th><td><span class="zh">Qwen3-1.7B-Base</span><span class="en">Qwen3-1.7B-Base</span></td></tr>
+<tr><th><span class="zh">教师</span><span class="en">Teachers</span></th><td><span class="zh">两个 Qwen3-4B（同源，不同后训练路径）</span><span class="en">two Qwen3-4B (same origin, different post-training)</span></td></tr>
+<tr><th><span class="zh">训练集</span><span class="en">Training set</span></th><td><span class="zh">DAPO-Math-17K</span><span class="en">DAPO-Math-17K</span></td></tr>
+<tr><th><span class="zh">基准</span><span class="en">Benchmarks</span></th><td><span class="zh">GSM8K、MATH-500、OlympiadBench</span><span class="en">GSM8K, MATH-500, OlympiadBench</span></td></tr>
+<tr><th><span class="zh">结果</span><span class="en">Result</span></th><td><span class="zh">OPD 50 步 &gt; GRPO 250 步终点</span><span class="en">OPD at step 50 &gt; GRPO at step 250</span></td></tr>
+<tr><th><span class="zh">算力口径</span><span class="en">Compute</span></th><td><span class="zh">活跃 GPU 小时 8.4 对 8.1</span><span class="en">8.4 vs 8.1 active GPU-hours</span></td></tr>
+<tr><th><span class="zh">框架</span><span class="en">Frameworks</span></th><td><span class="zh">verl、vLLM、FSDP、Ray</span><span class="en">verl, vLLM, FSDP, Ray</span></td></tr></table></div>
+          <div class="props-block" data-sel="p2" hidden><table class="props"><tr><th><span class="zh">起点模型</span><span class="en">Starting model</span></th><td><span class="zh">Qwen3-4B-Instruct-2507（全参 SFT）</span><span class="en">Qwen3-4B-Instruct-2507 (full SFT)</span></td></tr>
+<tr><th><span class="zh">轨迹教师</span><span class="en">Trajectory teacher</span></th><td><span class="zh">Qwen3-Coder-30B</span><span class="en">Qwen3-Coder-30B</span></td></tr>
+<tr><th><span class="zh">数据</span><span class="en">Data</span></th><td><span class="zh">6K → 3K 条轨迹；RL 600 题</span><span class="en">6K → 3K trajectories; 600 RL items</span></td></tr>
+<tr><th><span class="zh">工具</span><span class="en">Tool</span></th><td><span class="zh">Python 沙箱，最多 16 轮</span><span class="en">Python sandbox, up to 16 turns</span></td></tr>
+<tr><th><span class="zh">评测</span><span class="en">Evaluation</span></th><td><span class="zh">AIME2024 / 2025，每题 16 次</span><span class="en">AIME2024 / 2025, 16 runs per problem</span></td></tr>
+<tr><th><span class="zh">结果</span><span class="en">Result</span></th><td><span class="zh">共 +16.3 个百分点</span><span class="en">+16.3 pts in total</span></td></tr>
+<tr><th><span class="zh">框架</span><span class="en">Frameworks</span></th><td><span class="zh">verl、vLLM、Ray、FSDP</span><span class="en">verl, vLLM, Ray, FSDP</span></td></tr></table></div>
+          <div class="props-block" data-sel="comp" hidden><table class="props"><tr><th><span class="zh">Pacman</span><span class="en">Pacman</span></th><td><span class="zh">排名 11 / 298</span><span class="en">rank 11 / 298</span></td></tr>
+<tr><th><span class="zh">Flatland</span><span class="en">Flatland</span></th><td><span class="zh">排名 14 / 315</span><span class="en">rank 14 / 315</span></td></tr>
+<tr><th><span class="zh">方法</span><span class="en">Methods</span></th><td><span class="zh">PDDL 规划、A*、Q-learning、SIPP、优先级调度</span><span class="en">PDDL planning, A*, Q-learning, SIPP, priority scheduling</span></td></tr>
+<tr><th><span class="zh">语言</span><span class="en">Language</span></th><td><span class="zh">Python</span><span class="en">Python</span></td></tr></table></div>
+          <div class="props-block" data-sel="skills" hidden>
+            <table class="props">
+              <tr><th><span class="zh">后训练方法</span><span class="en">Post-training</span></th><td><span class="zh">LoRA / 全参 SFT、DPO、GRPO / DAPO、OPD · Reverse KL、GiGPO、RLVR、拒绝采样数据飞轮</span><span class="en">LoRA / full SFT, DPO, GRPO / DAPO, OPD · Reverse KL, GiGPO, RLVR, rejection-sampling flywheel</span></td></tr>
+              <tr><th><span class="zh">训练与推理框架</span><span class="en">Training &amp; serving</span></th><td><span class="zh">verl / verl-agent、LLaMA-Factory、vLLM、FSDP · Ray、Unsloth、SGLang、Ollama / llama.cpp</span><span class="en">verl / verl-agent, LLaMA-Factory, vLLM, FSDP · Ray, Unsloth, SGLang, Ollama / llama.cpp</span></td></tr>
+              <tr><th><span class="zh">评测与实验管理</span><span class="en">Evaluation</span></th><td><span class="zh">LLM-as-a-Judge 去偏、无标注评测基准、配对显著性检验、过程奖励模型筛数据、泄漏审计、WandB / SwanLab</span><span class="en">LLM-as-a-Judge de-biasing, unlabeled proxy benchmarks, paired significance tests, PRM data filtering, leakage audits, WandB / SwanLab</span></td></tr>
+              <tr><th><span class="zh">Agent 与工程</span><span class="en">Agents &amp; engineering</span></th><td><span class="zh">LangGraph、LangChain、MCP、Python、Linux · Git · Docker、AKS、Azure OpenAI Service、Azure Machine Learning</span><span class="en">LangGraph, LangChain, MCP, Python, Linux · Git · Docker, AKS, Azure OpenAI Service, Azure Machine Learning</span></td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ===== output ===== -->
+  <div class="bottom">
+    <div class="tabs" id="btabs">
+      <button class="tab" type="button" data-btab="out" aria-selected="true"><span class="zh">输出</span><span class="en">Output</span></button>
+      <button class="tab" type="button" data-btab="err" aria-selected="false"><span class="zh">错误列表</span><span class="en">Error List</span></button>
+    </div>
+    <div class="out" data-bpane="out">
+<div><span class="zh">1&gt;  正在还原依赖: verl, vLLM, LLaMA-Factory, LangGraph ...... 完成</span><span class="en">1&gt;  Restoring packages: verl, vLLM, LLaMA-Factory, LangGraph ...... done</span></div>
+<div><span class="zh">1&gt;  0 个错误，3 个警告。警告详见「错误列表」。</span><span class="en">1&gt;  0 errors, 3 warnings. See the Error List tab.</span></div>
+<div><span class="zh">1&gt;  正在链接: berniwitty@outlook.com</span><span class="en">1&gt;  Linking: berniwitty@outlook.com</span></div>
+<div><span class="zh">========== 生成: 成功 1 个，失败 0 个 ==========</span><span class="en">========== Build: 1 succeeded, 0 failed ==========</span></div>
+    </div>
+    <div class="out" data-bpane="err" hidden>
+      <table class="errlist">
+        <thead><tr><th><span class="zh">严重性</span><span class="en">Severity</span></th><th><span class="zh">代码</span><span class="en">Code</span></th><th><span class="zh">说明</span><span class="en">Description</span></th></tr></thead>
+        <tbody><tr><td class="sev"><span class="zh">警告</span><span class="en">Warning</span></td><td class="code"><span class="zh">GPU0080</span><span class="en">GPU0080</span></td><td><span class="zh">显存占用 79.8 / 80.0 GB，建议屏住呼吸</span><span class="en">VRAM at 79.8 / 80.0 GB. Consider holding your breath.</span></td></tr>
+<tr><td class="sev"><span class="zh">警告</span><span class="en">Warning</span></td><td class="code"><span class="zh">CS0162</span><span class="en">CS0162</span></td><td><span class="zh">检测到无法访问的代码: deadline 之前 sleep() 从未被调用</span><span class="en">Unreachable code detected: sleep() is never called before a deadline.</span></td></tr>
+<tr><td class="sev"><span class="zh">警告</span><span class="en">Warning</span></td><td class="code"><span class="zh">TODO0001</span><span class="en">TODO0001</span></td><td><span class="zh">// TODO: 找一份 2028 届大模型算法实习。此项尚未解决</span><span class="en">// TODO: land an LLM post-training internship. Still open.</span></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== status bar ===== -->
+  <div class="statusbar">
+    <span><span class="zh">就绪</span><span class="en">Ready</span></span>
+    <span class="sp"></span>
+    <span><span class="zh">0 个错误  3 个警告</span><span class="en">0 errors  3 warnings</span></span>
+    <span id="status-pos">1 / 3</span>
+    <span>UTF-8</span>
+  </div>
+</div>
+
+<!-- ===================== mobile: WeChat Moments ===================== -->
+<div id="moments">
+  <header class="mo-cover">
+    <svg class="mo-banner" viewBox="0 0 400 168" role="img" aria-label="Transformer 结构示意">
+      <rect class="ground" x="0" y="0" width="400" height="168"/>
+      <path class="faint" d="M26 150 H374"/>
+      <text x="26" y="30">N&#215;</text>
+      <rect class="blk" x="26" y="54" width="34" height="62" rx="3"/>
+      <text class="mini" x="43" y="80" text-anchor="middle">In</text>
+      <text class="mini" x="43" y="96" text-anchor="middle">Emb</text>
+      <path class="arw" d="M62 85 H82"/>
+      <rect class="blk" x="84" y="46" width="62" height="78" rx="3"/>
+      <text class="mini" x="115" y="76" text-anchor="middle">Multi-Head</text>
+      <text class="mini" x="115" y="92" text-anchor="middle">Attention</text>
+      <path class="arw" d="M148 85 H166"/>
+      <rect class="blk" x="168" y="58" width="52" height="54" rx="3"/>
+      <text class="mini" x="194" y="80" text-anchor="middle">Add &amp;</text>
+      <text class="mini" x="194" y="96" text-anchor="middle">Norm</text>
+      <path class="arw" d="M222 85 H240"/>
+      <rect class="blk" x="242" y="46" width="56" height="78" rx="3"/>
+      <text class="mini" x="270" y="76" text-anchor="middle">Feed</text>
+      <text class="mini" x="270" y="92" text-anchor="middle">Forward</text>
+      <path class="arw" d="M300 85 H318"/>
+      <rect class="blk" x="320" y="58" width="52" height="54" rx="3"/>
+      <text class="mini" x="346" y="80" text-anchor="middle">Add &amp;</text>
+      <text class="mini" x="346" y="96" text-anchor="middle">Norm</text>
+      <path class="res" d="M84 40 C120 16 168 16 194 40"/>
+      <path class="res" d="M242 40 C278 16 320 16 346 40"/>
+      <path class="res" d="M372 132 C372 152 43 152 43 128"/>
+      <circle class="dot" cx="194" cy="41" r="2.6"/>
+      <circle class="dot" cx="346" cy="41" r="2.6"/>
+    </svg>
+    <div class="mo-topbar">
+      <span></span>
+      <div class="lang" role="group" aria-label="语言 / Language">
+        <button type="button" data-set="zh" aria-pressed="true">中文</button>
+        <button type="button" data-set="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+    <div class="mo-cover-info"><p><span class="zh">2028 届（2027.10 毕业） | 可立刻到岗，每周 5 天线下，可连续实习 6 个月以上</span><span class="en">Expected graduation: Oct 2027   |   Available immediately — on-site 5 days/week, 6+ month internship</span></p>
+      <p class="sub"><span class="zh">2027.10 毕业</span><span class="en">Expected Oct 2027</span></p>
+      <p class="sub"><span class="zh">硕士论文（在投）：GDPR 框架下基于检索推理与知识蒸馏的 LLM 隐私声明披露审计系统</span><span class="en">Thesis (under review): Advisory Disclosure-Sufficiency Auditing of AI-Vendor Privacy Policies under the GDPR</span></p></div>
+    <div class="mo-id">
+      <span class="nm"><span class="zh">韩天悦</span><span class="en">Tianyue Han</span></span>
+      <div class="mo-av"><svg class="av" viewBox="0 0 100 100" role="img" aria-label="头像"><rect width="100" height="100" fill="#FFFFFF"/><path d="M18 112 C18 88 32 78 50 78 C68 78 82 88 82 112 Z" fill="#F4F4F4" stroke="#1A1A1A" stroke-width="4.2" stroke-linejoin="round"/><circle cx="50" cy="42" r="40" fill="#FAFAFA" stroke="#1A1A1A" stroke-width="4.2"/><path d="M15 76 C21 84 28 88 35 89" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/><path d="M85 76 C79 84 72 88 65 89" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/><circle cx="36" cy="43" r="4.3" fill="#1A1A1A"/><circle cx="64" cy="43" r="4.3" fill="#1A1A1A"/><path d="M36 55 C43 66 57 66 64 55" fill="none" stroke="#1A1A1A" stroke-width="4" stroke-linecap="round"/><path d="M50 106 C42 98 37 94 37 89 C37 85.5 39.5 83 43 83 C46 83 48.5 84.5 50 87 C51.5 84.5 54 83 57 83 C60.5 83 63 85.5 63 89 C63 94 58 98 50 106 Z" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="3.4" stroke-linejoin="round"/></svg></div>
+    </div>
+  </header>
+
+  <p class="mo-sign"><span class="zh">(+86) 18261907886 微信同号 ✉ berniwitty@outlook.com</span><span class="en">(+86) 18261907886   |   berniwitty@outlook.com</span></p>
+
+  <div class="mo-feed">
+      <article class="mo-post">
+        <div class="mo-av"><svg class="av" viewBox="0 0 100 100" role="img" aria-label="头像"><rect width="100" height="100" fill="#FFFFFF"/><path d="M18 112 C18 88 32 78 50 78 C68 78 82 88 82 112 Z" fill="#F4F4F4" stroke="#1A1A1A" stroke-width="4.2" stroke-linejoin="round"/><circle cx="50" cy="42" r="40" fill="#FAFAFA" stroke="#1A1A1A" stroke-width="4.2"/><path d="M15 76 C21 84 28 88 35 89" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/><path d="M85 76 C79 84 72 88 65 89" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/><circle cx="36" cy="43" r="4.3" fill="#1A1A1A"/><circle cx="64" cy="43" r="4.3" fill="#1A1A1A"/><path d="M36 55 C43 66 57 66 64 55" fill="none" stroke="#1A1A1A" stroke-width="4" stroke-linecap="round"/><path d="M50 106 C42 98 37 94 37 89 C37 85.5 39.5 83 43 83 C46 83 48.5 84.5 50 87 C51.5 84.5 54 83 57 83 C60.5 83 63 85.5 63 89 C63 94 58 98 50 106 Z" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="3.4" stroke-linejoin="round"/></svg></div>
+        <div class="mo-body">
+          <div class="mo-user"><span class="zh">韩天悦</span><span class="en">Tianyue Han</span></div>
+          <p class="mo-text"><b><span class="zh">教育背景</span><span class="en">EDUCATION</span></b></p>
+          <ul class="mo-pts">
+            <li><b><span class="zh">Monash University (QS:31)</span><span class="en">Monash University (QS 31)</span></b><br><span class="zh">人工智能硕士 High Distinction（前 5%）</span><span class="en">Master of Artificial Intelligence — High Distinction (top 5%)</span></li>
+            <li><b><span class="zh">中国海洋大学 (985)</span><span class="en">Ocean University of China (Project 985)</span></b><br><span class="zh">计算机科学与技术学士</span><span class="en">B.Eng. in Computer Science and Technology</span></li>
+          </ul>
+          <div class="mo-meta"><span class="mo-time"><span class="zh">刚刚</span><span class="en">Just now</span></span></div>
+        </div>
+      </article>
+      <article class="mo-post">
+        <div class="mo-av"><svg class="av" viewBox="0 0 100 100" role="img" aria-label="头像"><rect width="100" height="100" fill="#FFFFFF"/><path d="M18 112 C18 88 32 78 50 78 C68 78 82 88 82 112 Z" fill="#F4F4F4" stroke="#1A1A1A" stroke-width="4.2" stroke-linejoin="round"/><circle cx="50" cy="42" r="40" fill="#FAFAFA" stroke="#1A1A1A" stroke-width="4.2"/><path d="M15 76 C21 84 28 88 35 89" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/><path d="M85 76 C79 84 72 88 65 89" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/><circle cx="36" cy="43" r="4.3" fill="#1A1A1A"/><circle cx="64" cy="43" r="4.3" fill="#1A1A1A"/><path d="M36 55 C43 66 57 66 64 55" fill="none" stroke="#1A1A1A" stroke-width="4" stroke-linecap="round"/><path d="M50 106 C42 98 37 94 37 89 C37 85.5 39.5 83 43 83 C46 83 48.5 84.5 50 87 C51.5 84.5 54 83 57 83 C60.5 83 63 85.5 63 89 C63 94 58 98 50 106 Z" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="3.4" stroke-linejoin="round"/></svg></div>
+        <div class="mo-body">
+          <div class="mo-user"><span class="zh">韩天悦</span><span class="en">Tianyue Han</span></div>
+          <p class="mo-text"><b><span class="zh">面向电商购物的多智能体蒸馏与数据飞轮后训练</span><span class="en">E-Commerce Shopping Agent — Multi-Agent Distillation &amp; Data-Flywheel Post-Training</span></b></p>
+          <p class="mo-text mo-intro"><span class="zh">在 ShopSimulator benchmark 上对 Qwen3-8B 做后训练，同一评测下对比 SFT、决策点级 DPO 与多轮强化学习三条路线。任务分单轮与多轮个性化两类，多轮要主动追问才能问出用户没说出口的偏好；买到的商品类目、属性、规格、价格同时正确才计一次成功。</span><span class="en">Post-trained Qwen3-8B on the ShopSimulator benchmark, comparing SFT, decision-level DPO and multi-turn RL under one evaluation. A purchase counts as a success only when category, attribute, specification and price are all correct; multi-turn tasks additionally require asking back to surface unstated preferences.</span></p>
+          <ul class="mo-pts"><li><span class="zh"><b>四角色多智能体教师系统，多轮成功率从 12.0% 提到 27.3%：</b>Qwen3-8B 直接执行任务只有单轮 8.3%、多轮个性化 12.0%；Planner 拆解需求并决定何时追问，Searcher 检索候选，Comparator 逐项比价，Verifier 下单前核对规格，整套系统随后用作产数据的教师。</span><span class="en"><b>Four-role multi-agent teacher, multi-turn success 12.0% to 27.3%: </b>Qwen3-8B alone reaches 8.3% single-turn and 12.0% multi-turn. Planner decomposes the request and decides when to ask back, Searcher retrieves candidates, Comparator compares item by item, Verifier checks the specification before checkout; the system then serves as the teacher that produces data.</span></li>
+<li><span class="zh"><b>拒绝采样数据飞轮，单轮成功率从 8.3% 提到 26.0%：</b>教师在训练任务上反复采样，环境返回的成交结果直接充当标签，只留类目、属性、规格、价格全部买对的轨迹，再丢弃含重复搜索、点击页面上没有的商品、靠系统兜底下单的轨迹，并控制商品类目与场景配比；入选轨迹把四个角色轮流输出的协作过程改写成单个 Qwen3-8B 策略的一条动作序列，做 LoRA SFT。</span><span class="en"><b>Rejection-sampling data flywheel, single-turn success 8.3% to 26.0%: </b>The teacher samples repeatedly on training tasks with the environment's purchase outcome as the label, keeping only trajectories correct on all four attributes and dropping repeated searches, clicks on absent items and system-fallback orders; kept trajectories are rewritten from four-role collaboration into one Qwen3-8B action sequence for LoRA SFT.</span></li>
+<li><span class="zh"><b>重做数据过滤与 LoRA 配置，严格成功率提升 19.5 个点到 45.5%：</b>第二轮飞轮停止涨分后排查数据，步数规则只保留短于中位数的轨迹，最难的任务被整批丢弃；放开后训练样本从 1,197 条增至 3,816 条，LoRA 从只训注意力层改成训全部线性层、秩 64 提到 128，官方单轮测试集 45.5%，同测试集同指标下基准论文的 SFT 为 32.5%、SFT 加 GRPO 38.9%、GPT-5 零样本 40.8%，装回多智能体系统后多轮个性化 41.3%。</span><span class="en"><b>Reworked filtering and LoRA configuration, strict success +19.5 pts to 45.5%: </b>the step-count rule was keeping only shorter-than-median trajectories and discarding the hardest tasks; relaxing it grew training data from 1,197 to 3,816 samples, and LoRA moved from attention-only rank 64 to all linear layers at rank 128. Against the reference paper on the same test set: SFT 32.5%, SFT+GRPO 38.9%, GPT-5 zero-shot 40.8%; 41.3% multi-turn back inside the multi-agent system.</span></li>
+<li><span class="zh"><b>消融归因，数据约 8 个点、容量约 11 个点：</b>同一批数据只把 LoRA 退回注意力层秩 64，成绩回落到 34.1%，两项缺一不可；样本再扩到 4,982 条成绩持平，上限来自单条轨迹 24K token 的上下文，最长的轨迹装不进训练。</span><span class="en"><b>Ablation: about 8 pts from data, 11 pts from capacity: </b>reverting LoRA to attention-only rank 64 on the same data falls back to 34.1%, so neither alone accounts for the gain; expanding to 4,982 samples holds flat — the ceiling is the 24K-token context.</span></li>
+<li><span class="zh"><b>三条后训练路线对比，按每 GPU 小时收益选型：</b>数据触顶后转向偏好学习与强化学习：以同一决策点上不同动作能否成交为判据，构造 4,130 条偏好对训练 DPO，在 verl-agent 上搭出 GiGPO 多轮强化学习管线；GiGPO 单卡每步 110 分钟，同期 SFT 每 GPU 小时约换来 4 个百分点。</span><span class="en"><b>Three post-training routes compared, selected by return per GPU-hour: </b>with data saturated, built 4,130 decision-level preference pairs for DPO and a GiGPO multi-turn RL pipeline on verl-agent; GiGPO cost 110 minutes per step on one GPU, while SFT was still returning about 4 pts per GPU-hour.</span></li></ul>
+          <div class="mo-grid two"><figure><svg class="ink" viewBox="0 0 360 225" role="img" aria-label="单轮严格成功率柱状图">
+                <path d="M22 182 H342"/>
+                <rect class="white" x="30" y="157" width="44" height="25"/>
+                <rect class="hatched" x="92" y="84.5" width="44" height="97.5"/>
+                <rect class="hatched" x="154" y="65.3" width="44" height="116.7"/>
+                <rect class="hatched" x="216" y="59.6" width="44" height="122.4"/>
+                <rect class="solid" x="278" y="45.5" width="44" height="136.5"/>
+                <text class="val" x="52" y="150" text-anchor="middle">8.3</text>
+                <text class="val" x="114" y="77" text-anchor="middle">32.5</text>
+                <text class="val" x="176" y="58" text-anchor="middle">38.9</text>
+                <text class="val" x="238" y="52" text-anchor="middle">40.8</text>
+                <text class="big" x="300" y="38" text-anchor="middle">45.5</text>
+                <text class="lbl zh" x="52" y="199" text-anchor="middle">Qwen3-8B</text>
+                <text class="lbl zh" x="52" y="213" text-anchor="middle">直接跑</text>
+                <text class="lbl zh" x="114" y="199" text-anchor="middle">论文 SFT</text>
+                <text class="lbl zh" x="176" y="199" text-anchor="middle">SFT+GRPO</text>
+                <text class="lbl zh" x="238" y="199" text-anchor="middle">GPT-5</text>
+                <text class="lbl zh" x="238" y="213" text-anchor="middle">零样本</text>
+                <text class="lbl zh" x="300" y="199" text-anchor="middle">我的 SFT</text>
+                <text class="lbl en" x="52" y="199" text-anchor="middle">Qwen3-8B</text>
+                <text class="lbl en" x="52" y="213" text-anchor="middle">as-is</text>
+                <text class="lbl en" x="114" y="199" text-anchor="middle">paper SFT</text>
+                <text class="lbl en" x="176" y="199" text-anchor="middle">SFT+GRPO</text>
+                <text class="lbl en" x="238" y="199" text-anchor="middle">GPT-5</text>
+                <text class="lbl en" x="238" y="213" text-anchor="middle">zero-shot</text>
+                <text class="lbl en" x="300" y="199" text-anchor="middle">mine</text>
+              </svg></figure><figure><svg class="ink" viewBox="0 0 300 311.498" role="img" aria-label="四个角色与数据飞轮"><g transform="translate(8.571,0.000) scale(0.8571)">
+                <circle cx="45" cy="28" r="11"/><path d="M45 39 V70 M45 48 L30 62 M45 48 L58 52 M45 70 L34 95 M45 70 L56 95"/>
+                <rect class="white" x="56" y="40" width="20" height="26" rx="2"/><path class="thin" d="M60 48 h12 M60 54 h12 M60 60 h8"/>
+                <path class="thin" d="M40 26 q2 2 4 0 M47 26 q2 2 4 0"/>
+                <circle cx="130" cy="28" r="11"/><path d="M130 39 V70 M130 48 L146 46 M130 48 L116 62 M130 70 L119 95 M130 70 L141 95"/>
+                <circle class="white" cx="154" cy="42" r="9"/><path d="M160 49 L170 59"/>
+                <path class="thin" d="M125 26 q2 2 4 0 M132 26 q2 2 4 0"/>
+                <circle cx="215" cy="28" r="11"/><path d="M215 39 V70 M215 48 L235 44 M215 48 L200 62 M215 70 L204 95 M215 70 L226 95"/>
+                <path d="M238 34 V58 M224 38 H252"/>
+                <path class="thin" d="M224 38 L219 50 M224 38 L229 50 M252 38 L247 50 M252 38 L257 50"/>
+                <path d="M217 50 h14 M245 50 h14"/>
+                <path class="thin" d="M210 26 q2 2 4 0 M217 26 q2 2 4 0"/>
+                <circle cx="300" cy="28" r="11"/><path d="M300 39 V70 M300 48 L282 50 M300 48 L314 62 M300 70 L289 95 M300 70 L311 95"/>
+                <circle class="white" cx="274" cy="52" r="10"/><path d="M269 52 l4 4 l7 -8"/>
+                <path class="thin" d="M295 26 q2 2 4 0 M302 26 q2 2 4 0"/>
+                <text class="lbl zh" x="45" y="118" text-anchor="middle">Planner 拆解追问</text>
+                <text class="lbl zh" x="130" y="118" text-anchor="middle">Searcher 检索</text>
+                <text class="lbl zh" x="215" y="118" text-anchor="middle">Comparator 比价</text>
+                <text class="lbl zh" x="300" y="118" text-anchor="middle">Verifier 核对</text>
+                <text class="lbl en" x="45" y="118" text-anchor="middle">Planner</text>
+                <text class="lbl en" x="130" y="118" text-anchor="middle">Searcher</text>
+                <text class="lbl en" x="215" y="118" text-anchor="middle">Comparator</text>
+                <text class="lbl en" x="300" y="118" text-anchor="middle">Verifier</text>
+              </g><g transform="translate(51.379,125.429) scale(0.7586)">
+                <path class="arrow" d="M159.6 56.6 A70 70 0 0 1 193.4 90.4"/>
+                <path class="arrow" d="M193.4 149.6 A70 70 0 0 1 159.6 183.4"/>
+                <path class="arrow" d="M100.4 183.4 A70 70 0 0 1 66.6 149.6"/>
+                <path class="arrow" d="M66.6 90.4 A70 70 0 0 1 100.4 56.6"/>
+                <circle class="white" cx="130" cy="40" r="16"/><path d="M130 30 l8 4 v9 l-8 4 l-8 -4 v-9 z" class="thin"/>
+                <text class="lbl zh" x="130" y="12" text-anchor="middle">多智能体教师反复采样</text>
+                <text class="lbl en" x="130" y="12" text-anchor="middle">teacher samples repeatedly</text>
+                <circle class="white" cx="200" cy="120" r="16"/><path d="M193 120 l5 5 l9 -10"/>
+                <text class="lbl zh" x="224" y="110">环境判分</text><text class="lbl zh" x="224" y="126">只留全对</text>
+                <text class="lbl en" x="222" y="110">env grades</text><text class="lbl en" x="222" y="126">keep correct</text>
+                <circle class="white" cx="130" cy="200" r="16"/><path d="M121 193 h18 l-6 7 v7 h-6 v-7 z" class="thin"/>
+                <text class="lbl zh" x="130" y="232" text-anchor="middle">丢掉无效动作，改写成单策略轨迹</text>
+                <text class="lbl en" x="130" y="232" text-anchor="middle">drop bad actions, rewrite as one policy</text>
+                <circle class="white" cx="60" cy="120" r="16"/><circle cx="60" cy="115" r="5"/><path d="M52 130 q8 -8 16 0" class="thin"/>
+                <text class="lbl zh" x="38" y="110" text-anchor="end">学生</text><text class="lbl zh" x="38" y="126" text-anchor="end">LoRA SFT</text>
+                <text class="lbl en" x="38" y="110" text-anchor="end">student</text><text class="lbl en" x="38" y="126" text-anchor="end">LoRA SFT</text>
+                <text class="mid zh" x="130" y="126" text-anchor="middle">再转一圈</text>
+                <text class="mid en" x="130" y="126" text-anchor="middle">and again</text>
+              </g></svg></figure></div>
+          <div class="mo-meta"><span class="mo-time"><span class="zh">1 小时前</span><span class="en">1 hour ago</span></span></div>
+          <div class="mo-social">
+            <div class="mo-likes"><span class="heart">&#9825;</span><span class="zh">LoRA SFT、拒绝采样数据飞轮、教师蒸馏、DPO、GiGPO、LLaMA-Factory、verl-agent、vLLM</span><span class="en">LoRA SFT, rejection-sampling data flywheel, teacher distillation, DPO, GiGPO, LLaMA-Factory, verl-agent, vLLM</span></div>
+          </div>
+        </div>
+      </article>
+      <article class="mo-post">
+        <div class="mo-av"><svg class="av" viewBox="0 0 100 100" role="img" aria-label="头像"><rect width="100" height="100" fill="#FFFFFF"/><path d="M18 112 C18 88 32 78 50 78 C68 78 82 88 82 112 Z" fill="#F4F4F4" stroke="#1A1A1A" stroke-width="4.2" stroke-linejoin="round"/><circle cx="50" cy="42" r="40" fill="#FAFAFA" stroke="#1A1A1A" stroke-width="4.2"/><path d="M15 76 C21 84 28 88 35 89" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/><path d="M85 76 C79 84 72 88 65 89" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/><circle cx="36" cy="43" r="4.3" fill="#1A1A1A"/><circle cx="64" cy="43" r="4.3" fill="#1A1A1A"/><path d="M36 55 C43 66 57 66 64 55" fill="none" stroke="#1A1A1A" stroke-width="4" stroke-linecap="round"/><path d="M50 106 C42 98 37 94 37 89 C37 85.5 39.5 83 43 83 C46 83 48.5 84.5 50 87 C51.5 84.5 54 83 57 83 C60.5 83 63 85.5 63 89 C63 94 58 98 50 106 Z" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="3.4" stroke-linejoin="round"/></svg></div>
+        <div class="mo-body">
+          <div class="mo-user"><span class="zh">韩天悦</span><span class="en">Tianyue Han</span></div>
+          <p class="mo-text"><b><span class="zh">基于强化学习与在线蒸馏的数学推理模型后训练</span><span class="en">GRPO vs. On-Policy Distillation — Post-Training a Math-Reasoning LLM at Matched Compute</span></b></p>
+          <p class="mo-text mo-intro"><span class="zh">GRPO 与 OPD 缺少等算力下的直接对照。本项目面向数学推理任务，在同一份训练集（DAPO-Math-17K）与同一评测口径下补上该对照，并进一步回答蒸馏路线下教师选择的依据。</span><span class="en">GRPO and OPD lacked a direct comparison at matched compute. This project supplies one for math reasoning under a single training set (DAPO-Math-17K) and one evaluation protocol, and further answers how to choose a distillation teacher.</span></p>
+          <ul class="mo-pts"><li><span class="zh"><b>基于 verl 实现 OPD 与 GRPO 双路线，核心差异是监督信号密度：</b>OPD 的监督信号是学生自采样序列上逐 token 的反向 KL 值，由教师对数概率算得，以策略梯度回传。GRPO 的监督信号是 math-verify 判定整条回答正误的一个标量。区别在于密度：前者一条回答上千个逐位置信号，后者一个标量摊给全部 token。</span><span class="en"><b>Both routes built on verl; the difference is supervision density: </b>OPD supervises every token of the student's own sampled sequence with a reverse-KL value from teacher log-probs, back-propagated as a policy gradient; GRPO supplies one math-verify scalar per answer — thousands of per-position signals versus one scalar spread over all tokens.</span></li>
+<li><span class="zh"><b>等活跃算力下 OPD 三个基准准确率均高于 GRPO，50 步即超其 250 步终点准确率：</b>准确率相对未训练的学生模型提升 17 至 26 个百分点。活跃算力按实测 GPU 利用率折算对齐；评测协议自建、独立于训练框架，覆盖三个难度递增的数学基准（GSM8K / MATH-500 / Olympiad-Bench）全量测试集共 2493 题，并做配对显著性检验。</span><span class="en"><b>At matched active compute OPD beats GRPO on all three benchmarks, passing GRPO's 250-step endpoint by step 50: </b>+17 to +26 pts over the untrained student. Active compute aligned by measured GPU utilization; the evaluation protocol is self-built and framework-independent, covering the full GSM8K / MATH-500 / OlympiadBench sets (2,493 problems) with paired significance tests.</span></li>
+<li><span class="zh"><b>同源准确率相近的双教师对照：与学生路径一致者蒸出的学生准确率更高，差距随难度递增：</b>两个教师同出自 Qwen3-4B-Base、自身基准准确率仅相差 2.2 个百分点，区别只在后训练路径：一个跳过 SFT 直接做单域数学强化学习，与学生路径一致；另一个是经多阶段通用后训练的 Qwen3-4B 指令模型。该差距至最难的基准达到统计显著，训练首步两个教师在学生序列上逐 token 对数概率差的均值即相差 1.6 倍，通用后训练的教师离学生的分布更远。</span><span class="en"><b>Two same-origin teachers of near-equal accuracy: the route-matched one distills better, and the gap grows with difficulty: </b>both come from Qwen3-4B-Base and differ by 2.2 pts on their own benchmarks; one skipped SFT and did single-domain math RL, matching the student's route, the other is the multi-stage post-trained instruct model. The gap reaches significance on the hardest benchmark, and at the first step their mean per-token log-prob gap on student sequences already differs by 1.6x.</span></li></ul>
+          <div class="mo-grid one"><figure><svg class="ink" viewBox="0 0 360 347.5" role="img" aria-label="三个基准上的准确率与监督信号密度"><g transform="translate(0.000,0.000) scale(1.0000)">
+                <path d="M22 182 H342"/>
+                <rect class="white" x="30" y="14" width="12" height="12"/><text class="lbl zh" x="47" y="25">未训练</text><text class="lbl en" x="47" y="25">base</text>
+                <rect class="hatched" x="110" y="14" width="12" height="12"/><text class="lbl zh" x="127" y="25">GRPO 250 步</text><text class="lbl en" x="127" y="25">GRPO, 250 steps</text>
+                <rect class="solid" x="230" y="14" width="12" height="12"/><text class="lbl zh" x="247" y="25">在线蒸馏 350 步</text><text class="lbl en" x="247" y="25">OPD, 350 steps</text>
+                <rect class="white" x="40" y="88.9" width="24" height="93.1"/>
+                <rect class="hatched" x="68" y="57.6" width="24" height="124.4"/>
+                <rect class="solid" x="96" y="49.4" width="24" height="132.6"/>
+                <text class="val" x="52" y="83" text-anchor="middle">57.8</text>
+                <text class="val" x="80" y="52" text-anchor="middle">77.2</text>
+                <text class="val" x="108" y="43" text-anchor="middle">82.3</text>
+                <text class="lbl" x="80" y="199" text-anchor="middle">GSM8K</text>
+                <rect class="white" x="150" y="113.7" width="24" height="68.3"/>
+                <rect class="hatched" x="178" y="77.9" width="24" height="104.1"/>
+                <rect class="solid" x="206" y="72.5" width="24" height="109.5"/>
+                <text class="val" x="162" y="108" text-anchor="middle">42.4</text>
+                <text class="val" x="190" y="72" text-anchor="middle">64.6</text>
+                <text class="val" x="218" y="66" text-anchor="middle">68.0</text>
+                <text class="lbl" x="190" y="199" text-anchor="middle">MATH-500</text>
+                <rect class="white" x="260" y="154" width="24" height="28"/>
+                <rect class="hatched" x="288" y="132.5" width="24" height="49.5"/>
+                <rect class="solid" x="316" y="125.8" width="24" height="56.2"/>
+                <text class="val" x="272" y="148" text-anchor="middle">17.4</text>
+                <text class="val" x="300" y="127" text-anchor="middle">30.7</text>
+                <text class="val" x="328" y="120" text-anchor="middle">34.9</text>
+                <text class="lbl" x="300" y="199" text-anchor="middle">OlympiadBench</text>
+                <text class="lbl zh" x="180" y="218" text-anchor="middle">难度从左到右递增 · 贪心解码准确率（%）</text>
+                <text class="lbl en" x="180" y="218" text-anchor="middle">difficulty increases left to right · greedy accuracy (%)</text>
+              </g><g transform="translate(30.000,231.000) scale(0.9375)">
+                <text class="mid" x="8" y="44">OPD</text>
+                <g>
+                  <path class="arrow thin" d="M69 12 V26"/><path class="arrow thin" d="M90 8 V26"/><path class="arrow thin" d="M111 16 V26"/><path class="arrow thin" d="M132 6 V26"/><path class="arrow thin" d="M153 14 V26"/><path class="arrow thin" d="M174 10 V26"/><path class="arrow thin" d="M195 18 V26"/><path class="arrow thin" d="M216 8 V26"/><path class="arrow thin" d="M237 13 V26"/><path class="arrow thin" d="M258 6 V26"/><path class="arrow thin" d="M279 15 V26"/><path class="arrow thin" d="M300 11 V26"/>
+                </g>
+                <g>
+                  <rect class="white" x="60" y="30" width="18" height="16"/><rect class="white" x="81" y="30" width="18" height="16"/><rect class="white" x="102" y="30" width="18" height="16"/><rect class="white" x="123" y="30" width="18" height="16"/><rect class="white" x="144" y="30" width="18" height="16"/><rect class="white" x="165" y="30" width="18" height="16"/><rect class="white" x="186" y="30" width="18" height="16"/><rect class="white" x="207" y="30" width="18" height="16"/><rect class="white" x="228" y="30" width="18" height="16"/><rect class="white" x="249" y="30" width="18" height="16"/><rect class="white" x="270" y="30" width="18" height="16"/><rect class="white" x="291" y="30" width="18" height="16"/>
+                </g>
+                <text class="mid" x="8" y="100">GRPO</text>
+                <path class="thin" d="M60 76 V70 H309 V76"/>
+                <path class="arrow thin" d="M184 56 V68"/>
+                <text class="val" x="184" y="52" text-anchor="middle">✓ / ✗</text>
+                <g>
+                  <rect class="white" x="60" y="82" width="18" height="16"/><rect class="white" x="81" y="82" width="18" height="16"/><rect class="white" x="102" y="82" width="18" height="16"/><rect class="white" x="123" y="82" width="18" height="16"/><rect class="white" x="144" y="82" width="18" height="16"/><rect class="white" x="165" y="82" width="18" height="16"/><rect class="white" x="186" y="82" width="18" height="16"/><rect class="white" x="207" y="82" width="18" height="16"/><rect class="white" x="228" y="82" width="18" height="16"/><rect class="white" x="249" y="82" width="18" height="16"/><rect class="white" x="270" y="82" width="18" height="16"/><rect class="white" x="291" y="82" width="18" height="16"/>
+                </g>
+                <text class="lbl zh" x="184" y="114" text-anchor="middle">同一条回答的 token</text>
+                <text class="lbl en" x="184" y="114" text-anchor="middle">tokens of one answer</text>
+              </g></svg></figure></div>
+          <div class="mo-meta"><span class="mo-time"><span class="zh">昨天</span><span class="en">Yesterday</span></span></div>
+          <div class="mo-social">
+            <div class="mo-likes"><span class="heart">&#9825;</span><span class="zh">RLVR、GRPO、OPD、Reverse KL、verl、vLLM、FSDP、Ray、PyTorch</span><span class="en">RLVR, GRPO, OPD, Reverse KL, verl, vLLM, FSDP, Ray, PyTorch</span></div>
+          </div>
+        </div>
+      </article>
+      <article class="mo-post">
+        <div class="mo-av"><svg class="av" viewBox="0 0 100 100" role="img" aria-label="头像"><rect width="100" height="100" fill="#FFFFFF"/><path d="M18 112 C18 88 32 78 50 78 C68 78 82 88 82 112 Z" fill="#F4F4F4" stroke="#1A1A1A" stroke-width="4.2" stroke-linejoin="round"/><circle cx="50" cy="42" r="40" fill="#FAFAFA" stroke="#1A1A1A" stroke-width="4.2"/><path d="M15 76 C21 84 28 88 35 89" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/><path d="M85 76 C79 84 72 88 65 89" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/><circle cx="36" cy="43" r="4.3" fill="#1A1A1A"/><circle cx="64" cy="43" r="4.3" fill="#1A1A1A"/><path d="M36 55 C43 66 57 66 64 55" fill="none" stroke="#1A1A1A" stroke-width="4" stroke-linecap="round"/><path d="M50 106 C42 98 37 94 37 89 C37 85.5 39.5 83 43 83 C46 83 48.5 84.5 50 87 C51.5 84.5 54 83 57 83 C60.5 83 63 85.5 63 89 C63 94 58 98 50 106 Z" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="3.4" stroke-linejoin="round"/></svg></div>
+        <div class="mo-body">
+          <div class="mo-user"><span class="zh">韩天悦</span><span class="en">Tianyue Han</span></div>
+          <p class="mo-text"><b><span class="zh">面向数学推理的多轮工具调用智能体强化学习训练与评测</span><span class="en">Multi-Turn Tool-Use Agent for Math Reasoning — Agentic RL Training &amp; Evaluation</span></b></p>
+          <p class="mo-text mo-intro"><span class="zh">面向数学推理构建多轮工具调用智能体的完整后训练流程：基座模型 → 工具调用监督微调 → 强化学习。模型在推理途中自主发出 Python 代码，由沙箱执行后读取输出继续推理，单条轨迹最多 16 轮。</span><span class="en">Built the full post-training pipeline of a multi-turn tool-use agent for math reasoning: base model, tool-use SFT, then RL. The model emits Python mid-reasoning, a sandbox executes it and the output is read back to continue, up to 16 turns per trajectory.</span></p>
+          <ul class="mo-pts"><li><span class="zh"><b>监督微调：沙箱真实执行的 6K 条轨迹经过程奖励筛至 3K，构建强化学习起点</b><br>轨迹数据：以 Qwen3-Coder-30B 为教师，在沙箱中真实运行代码、读回输出继续推理，端到端产出 6K 条多轮工具调用轨迹，再用过程奖励模型 ReasonFlux-PRM 打分排序保留 3K 条；以此全参微调 Qwen3-4B-Instruct-2507，得到具备多轮工具调用能力的强化学习起点模型。</span><span class="en"><b>SFT: 6K sandbox-executed trajectories filtered to 3K by process reward, giving the RL starting point</b><br>Trajectory data: with Qwen3-Coder-30B as the teacher, code was really executed in the sandbox and its output read back to continue reasoning, producing 6K multi-turn trajectories end to end; ReasonFlux-PRM scored and ranked them down to 3K, which fully fine-tuned Qwen3-4B-Instruct-2507 into a starting model with multi-turn tool-use ability.</span></li>
+<li><span class="zh"><b>强化学习数据：分层采样使代码题占比由 14% 提至 42%，让工具使用质量进入奖励</b><br>推理题库数据：30K 道，由 17.9K 道竞赛数学题、4.9K 道通用数学题、4.3K 道代码题与 3.0K 道科学题混合而成，以避免单一题型使策略收窄到固定解法。训练集数据：依奖励判定方式分层采样 600 道——数学题的奖励只看最终答案是否匹配，模型是否调用工具、代码是否跑通均不进入奖励；代码题的奖励则由沙箱执行单元测试的结果直接决定。代码题在题库中仅占 14%、随机采样下三成批次抽不到，分层提升至 42% 使其稳定进入每步更新。</span><span class="en"><b>RL data: stratified sampling lifts code problems from 14% to 42%, putting tool-use quality into the reward</b><br>Problem pool: 30K items — 17.9K competition math, 4.9K general math, 4.3K code, 3.0K science — mixed so no single type narrows the policy to one solution pattern. Training set: 600 items stratified by how the reward is judged; math rewards check only the final answer, ignoring whether tools were called, while code rewards come from sandbox unit tests. Code problems are 14% of the pool and missing from three in ten batches under random sampling, so lifting them to 42% keeps them in every update.</span></li>
+<li><span class="zh"><b>评测与成果：AIME 测试集上共提升 16.3 个百分点，训练量仅为全量的 1.4%</b><br>在 AIME2024、AIME2025 各 30 题上评测，每题独立作答 16 次、合计 960 次采样。</span><span class="en"><b>Results: +16.3 pts in total on the AIME test sets, using 1.4% of the full training volume</b><br>Evaluated on AIME2024 and AIME2025, 30 problems each, 16 independent runs per problem, 960 samples in total.</span></li></ul>
+          <div class="mo-grid one"><figure><svg class="ink" viewBox="0 0 360 296.5" role="img" aria-label="工具调用流程、数据漏斗与分层采样"><g transform="translate(0.000,0.000) scale(1.0000)">
+                <g transform="translate(20 40)">
+                  <rect class="white" x="22" y="44" width="40" height="40" rx="6"/>
+                  <circle cx="35" cy="60" r="3"/><circle cx="49" cy="60" r="3"/><path class="thin" d="M34 72 q8 5 16 0"/>
+                  <path d="M42 44 v-8 m-4 0 h8"/>
+                  <path class="arrow" d="M66 64 H96"/>
+                  <rect class="white" x="100" y="36" width="96" height="56" rx="4"/>
+                  <text class="mono" x="108" y="54">x = solve(eq)</text>
+                  <text class="mono" x="108" y="70">print(x)</text>
+                  <text class="lbl zh" x="148" y="86" text-anchor="middle">推理中途写代码</text>
+                  <text class="lbl en" x="148" y="86" text-anchor="middle">code mid-reasoning</text>
+                  <path class="arrow" d="M200 64 H228"/>
+                  <rect class="white" x="232" y="34" width="72" height="60" rx="4"/>
+                  <circle cx="268" cy="58" r="10"/><circle cx="268" cy="58" r="4"/>
+                  <path class="thin" d="M268 44 v-4 M268 72 v4 M254 58 h-4 M282 58 h4 M258 48 l-3 -3 M278 48 l3 -3 M258 68 l-3 3 M278 68 l3 3"/>
+                  <text class="lbl zh" x="268" y="88" text-anchor="middle">沙箱真跑</text>
+                  <text class="lbl en" x="268" y="88" text-anchor="middle">sandbox</text>
+                  <path class="arrow" d="M268 98 V120 H42 V90"/>
+                  <text class="lbl zh" x="155" y="134" text-anchor="middle">读回输出继续推理 · 一条轨迹最多 16 轮</text>
+                  <text class="lbl en" x="155" y="134" text-anchor="middle">read the output back and continue · up to 16 turns</text>
+                  <text class="mono" x="176" y="114">out: 42</text>
+                </g>
+                <text class="big" x="180" y="30" text-anchor="middle">AIME +16.3</text>
+              </g><g transform="translate(2.000,221.000) scale(0.5500)">
+                <path d="M20 10 H300 L215 78 V118 L105 126 V78 Z"/>
+                <text class="mid" x="160" y="36" text-anchor="middle">6K</text>
+                <text class="lbl zh" x="160" y="54" text-anchor="middle">沙箱真实执行的多轮轨迹</text>
+                <text class="lbl en" x="160" y="54" text-anchor="middle">sandbox-executed trajectories</text>
+                <text class="mid" x="160" y="100" text-anchor="middle">3K</text>
+                <text class="lbl zh" x="160" y="115" text-anchor="middle">过程奖励打分留下</text>
+                <text class="lbl en" x="160" y="115" text-anchor="middle">kept by process reward</text>
+                <text class="lbl zh" x="224" y="94">教师 Qwen3-Coder-30B</text><text class="lbl en" x="224" y="94">teacher: Qwen3-Coder-30B</text>
+                <text class="lbl" x="224" y="112">PRM: ReasonFlux-PRM</text>
+              </g><g transform="translate(182.000,221.000) scale(0.5500)">
+                <path d="M24 30 h84 v82 q0 8 -8 8 h-68 q-8 0 -8 -8 z"/>
+                <path class="thin" d="M30 22 h72"/>
+                <rect class="hatched" x="24" y="98" width="84" height="22"/>
+                <text class="val" x="66" y="60" text-anchor="middle">30K</text>
+                <text class="lbl zh" x="66" y="76" text-anchor="middle">题库</text><text class="lbl en" x="66" y="76" text-anchor="middle">pool</text>
+                <text class="val" x="66" y="94" text-anchor="middle">14%</text>
+                <path class="arrow" d="M118 74 H166"/>
+                <text class="lbl zh" x="142" y="66" text-anchor="middle">分层采样</text>
+                <text class="lbl en" x="142" y="66" text-anchor="middle">stratified</text>
+                <path d="M176 30 h84 v82 q0 8 -8 8 h-68 q-8 0 -8 -8 z"/>
+                <path class="thin" d="M182 22 h72"/>
+                <rect class="hatched" x="176" y="64" width="84" height="56"/>
+                <text class="lbl zh" x="218" y="44" text-anchor="middle">训练集</text><text class="lbl en" x="218" y="44" text-anchor="middle">train set</text>
+                <text class="val" x="218" y="59" text-anchor="middle">600</text>
+                <text class="big" x="218" y="100" text-anchor="middle" style="fill:#fff;paint-order:stroke;stroke:#2a2a2a;stroke-width:4px">42%</text>
+                <rect class="hatched" x="272" y="66" width="12" height="12"/>
+                <text class="lbl zh" x="288" y="76">代码题</text><text class="lbl en" x="288" y="76">code</text>
+                <text class="lbl zh" x="272" y="96">奖励来自</text><text class="lbl zh" x="272" y="110">单元测试</text>
+                <text class="lbl en" x="272" y="96">reward =</text><text class="lbl en" x="272" y="110">unit tests</text>
+              </g></svg></figure></div>
+          <div class="mo-meta"><span class="mo-time"><span class="zh">2 天前</span><span class="en">2 days ago</span></span></div>
+          <div class="mo-social">
+            <div class="mo-likes"><span class="heart">&#9825;</span><span class="zh">GRPO、DAPO、RLVR、Agentic RL、SFT、verl、vLLM、Ray、FSDP、PyTorch</span><span class="en">GRPO, DAPO, RLVR, Agentic RL, SFT, verl, vLLM, Ray, FSDP, PyTorch</span></div>
+          </div>
+        </div>
+      </article>
+      <article class="mo-post">
+        <div class="mo-av"><svg class="av" viewBox="0 0 100 100" role="img" aria-label="头像"><rect width="100" height="100" fill="#FFFFFF"/><path d="M18 112 C18 88 32 78 50 78 C68 78 82 88 82 112 Z" fill="#F4F4F4" stroke="#1A1A1A" stroke-width="4.2" stroke-linejoin="round"/><circle cx="50" cy="42" r="40" fill="#FAFAFA" stroke="#1A1A1A" stroke-width="4.2"/><path d="M15 76 C21 84 28 88 35 89" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/><path d="M85 76 C79 84 72 88 65 89" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/><circle cx="36" cy="43" r="4.3" fill="#1A1A1A"/><circle cx="64" cy="43" r="4.3" fill="#1A1A1A"/><path d="M36 55 C43 66 57 66 64 55" fill="none" stroke="#1A1A1A" stroke-width="4" stroke-linecap="round"/><path d="M50 106 C42 98 37 94 37 89 C37 85.5 39.5 83 43 83 C46 83 48.5 84.5 50 87 C51.5 84.5 54 83 57 83 C60.5 83 63 85.5 63 89 C63 94 58 98 50 106 Z" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="3.4" stroke-linejoin="round"/></svg></div>
+        <div class="mo-body">
+          <div class="mo-user"><span class="zh">韩天悦</span><span class="en">Tianyue Han</span></div>
+          <p class="mo-text"><b><span class="zh">技能</span><span class="en">TECHNICAL SKILLS</span></b></p>
+          <ul class="mo-pts lz"><li>Agent 方法：Multi-Agent 协作、ReAct 多轮工具调用与沙箱执行、PDDL 规划、LangChain / LangGraph、MCP</li>
+<li>RAG 与检索：Embedding（BGE-M3）、BM25 + 向量混合召回、Cross-Encoder 重排、向量库 FAISS / Milvus</li>
+<li>微调与部署：SFT / LoRA / QLoRA、知识蒸馏、Unsloth、vLLM / SGLang、Ollama / llama.cpp、大模型 API 调用</li>
+<li>评测与实验管理：LLM-as-a-Judge 去偏、无标注评测基准、配对显著性检验、WandB / SwanLab</li>
+<li>工程与云：Python、Linux、Git、Docker、AKS、Azure OpenAI Service / Azure Machine Learning</li></ul>
+          <ul class="mo-pts le"><li>Evaluation &amp; experiment management: LLM-as-a-Judge de-biasing, unlabeled proxy benchmarks, paired significance testing, WandB / SwanLab</li>
+<li>Fine-tuning &amp; agent toolchain: Unsloth, SGLang, Ollama / llama.cpp, LangChain / LangGraph, MCP</li>
+<li>Engineering &amp; cloud: Python, Linux, Git, Docker, AKS, Azure OpenAI Service / Azure Machine Learning</li>
+<li>Languages: Mandarin (native), English (full professional proficiency)</li></ul>
+          <div class="mo-meta"><span class="mo-time"><span class="zh">3 天前</span><span class="en">3 days ago</span></span></div>
+          <div class="mo-social">
+            <div class="mo-likes"><span class="heart">&#9825;</span><span class="zh">Pacman、Flatland</span><span class="en">Pacman, Flatland</span></div>
+          </div>
+        </div>
+      </article>
+      <article class="mo-post">
+        <div class="mo-av"><svg class="av" viewBox="0 0 100 100" role="img" aria-label="头像"><rect width="100" height="100" fill="#FFFFFF"/><path d="M18 112 C18 88 32 78 50 78 C68 78 82 88 82 112 Z" fill="#F4F4F4" stroke="#1A1A1A" stroke-width="4.2" stroke-linejoin="round"/><circle cx="50" cy="42" r="40" fill="#FAFAFA" stroke="#1A1A1A" stroke-width="4.2"/><path d="M15 76 C21 84 28 88 35 89" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/><path d="M85 76 C79 84 72 88 65 89" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/><circle cx="36" cy="43" r="4.3" fill="#1A1A1A"/><circle cx="64" cy="43" r="4.3" fill="#1A1A1A"/><path d="M36 55 C43 66 57 66 64 55" fill="none" stroke="#1A1A1A" stroke-width="4" stroke-linecap="round"/><path d="M50 106 C42 98 37 94 37 89 C37 85.5 39.5 83 43 83 C46 83 48.5 84.5 50 87 C51.5 84.5 54 83 57 83 C60.5 83 63 85.5 63 89 C63 94 58 98 50 106 Z" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="3.4" stroke-linejoin="round"/></svg></div>
+        <div class="mo-body">
+          <div class="mo-user"><span class="zh">韩天悦</span><span class="en">Tianyue Han</span></div>
+          <p class="mo-text"><b><span class="zh">Pacman 多智能体对战系统 排名 11/298</span><span class="en">Pacman Multi-Agent Contest — rank 11/298</span></b></p>
+          <p class="mo-text mo-intro"><span class="zh">基于所有参赛者的两两博弈胜率</span><span class="en">Ranked by pairwise win rate against all entrants</span></p>
+          <ul class="mo-pts"><li><span class="zh">搭建 2v2 多智能体 Pacman 对战系统，采用高层 PDDL 符号规划 + 低层 A* 安全路径搜索 + 简单 Q-learning 兜底的 planner–executor 混合架构</span><span class="en">Built a 2v2 multi-agent Pacman contest system on a planner–executor hybrid architecture: high-level PDDL symbolic planning, low-level A* safe path search and a simple Q-learning fallback</span></li>
+<li><span class="zh">高层将局面抽象为符号谓词与目标（吃食物/能量豆、回家），在保守进攻、激进进攻、边界巡逻、追击入侵者、位置重排等策略模式间切换，从风险、比分、携带食物和地图控制角度做全局决策</span><span class="en">The high level abstracts the board into symbolic predicates and goals (eat food/capsules, return home) and switches between strategy modes — cautious attack, aggressive attack, border patrol, chasing invaders and repositioning — deciding globally from risk, score, carried food and map control</span></li>
+<li><span class="zh">多智能体协同方面，每个智能体将自己的意图、目标、危险等级、已认领食物/能量豆、边界站位写入共享信息表，实现“不抢同一食物、自动分配边界防守位、通过吃能量豆救援队友”等协作行为</span><span class="en">For coordination, each agent writes its intent, target, danger level, claimed food/capsules and border post into a shared table, producing behaviours such as never contesting the same food, splitting border defence automatically and rescuing teammates by eating capsules</span></li>
+<li><span class="zh">低层在 A* 中加入避开对手危险区、回家路径安全评估、边界约束等启发式，在规划失败或时间不足时，用基于得分变化与距离特征的 Q-learning 策略作为保守 fallback，保证整体策略稳定性</span><span class="en">The low level adds heuristics to A* for avoiding opponents' danger zones, assessing the safety of the route home and respecting border constraints; when planning fails or time runs short, a Q-learning policy over score-change and distance features acts as a conservative fallback that keeps the overall strategy stable</span></li></ul>
+          <div class="mo-meta"><span class="mo-time"><span class="zh">3 天前</span><span class="en">3 days ago</span></span></div>
+          <div class="mo-social">
+            <div class="mo-likes"><span class="heart">&#9825;</span><span class="zh">多智能体对战博弈、PDDL 规划、基于时空的 A* 搜索、启发式搜索、Q-learning</span><span class="en">multi-agent adversarial games, PDDL planning, space-time A* search, heuristic search, Q-learning</span></div>
+          </div>
+        </div>
+      </article>
+      <article class="mo-post">
+        <div class="mo-av"><svg class="av" viewBox="0 0 100 100" role="img" aria-label="头像"><rect width="100" height="100" fill="#FFFFFF"/><path d="M18 112 C18 88 32 78 50 78 C68 78 82 88 82 112 Z" fill="#F4F4F4" stroke="#1A1A1A" stroke-width="4.2" stroke-linejoin="round"/><circle cx="50" cy="42" r="40" fill="#FAFAFA" stroke="#1A1A1A" stroke-width="4.2"/><path d="M15 76 C21 84 28 88 35 89" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/><path d="M85 76 C79 84 72 88 65 89" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/><circle cx="36" cy="43" r="4.3" fill="#1A1A1A"/><circle cx="64" cy="43" r="4.3" fill="#1A1A1A"/><path d="M36 55 C43 66 57 66 64 55" fill="none" stroke="#1A1A1A" stroke-width="4" stroke-linecap="round"/><path d="M50 106 C42 98 37 94 37 89 C37 85.5 39.5 83 43 83 C46 83 48.5 84.5 50 87 C51.5 84.5 54 83 57 83 C60.5 83 63 85.5 63 89 C63 94 58 98 50 106 Z" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="3.4" stroke-linejoin="round"/></svg></div>
+        <div class="mo-body">
+          <div class="mo-user"><span class="zh">韩天悦</span><span class="en">Tianyue Han</span></div>
+          <p class="mo-text"><b><span class="zh">Flatland 多智能体铁路调度系统 排名 14/315</span><span class="en">Flatland Multi-Agent Railway Scheduling — rank 14/315</span></b></p>
+          <p class="mo-text mo-intro"><span class="zh">基于所有智能体数量所有地图的按时到达比例 + 到达所需时间步</span><span class="en">Ranked by on-time arrival rate and time steps across all maps and agent counts</span></p>
+          <ul class="mo-pts"><li><span class="zh">在 Flatland/Piglet 环境中实现多智能体 planner–executor 架构：高层根据每列车距截止时间的“时间余量”计算紧迫度并依次调度，低层使用 Safe-Interval Path Planning (SIPP) 为每辆列车规划满足截止时间和故障约束的单智能体轨迹</span><span class="en">Implemented a multi-agent planner–executor architecture in Flatland/Piglet: the high level ranks urgency by each train's slack to its deadline and schedules them in turn, while the low level uses Safe-Interval Path Planning (SIPP) to plan a single-agent trajectory per train under deadline and malfunction constraints</span></li>
+<li><span class="zh">基于已规划路径维护轨道节点和区段的时间占用表，合并空闲区间生成安全时间段，在 SIPP 搜索中把状态扩展为“位置 + 方向 + 所在安全时间段”，并用基于曼哈顿距离的启发式引导搜索，避免节点碰撞和对向交换冲突</span><span class="en">Time-occupancy tables for track nodes and segments are maintained from the planned paths, free intervals are merged into safe windows, and the SIPP search expands states as position + direction + safe interval, guided by a Manhattan-distance heuristic to avoid node collisions and head-on swaps</span></li>
+<li><span class="zh">引入轨道结构约束，对死胡同轨道设置规则，仅在作为起终点或已被占用时允许进入，并采用“带结构约束的优先规划 → 放宽约束的兜底规划”两阶段策略，在高密度路网中兼顾可解率与搜索效率</span><span class="en">Track-structure constraints are added — a dead-end track may be entered only when it is a start or goal or already occupied — together with a two-stage strategy of constrained priority planning followed by relaxed fallback planning, balancing solvable rate against search efficiency on dense networks</span></li>
+<li><span class="zh">设计 MCP 重规划兜底模块：故障发生时保留所有列车已执行的轨迹前缀，局部微调受影响列车的剩余行程进行排队等待，避免全局重算超时和内存爆炸</span><span class="en">Designed an MCP replanning fallback: on a malfunction the executed trajectory prefixes of all trains are kept and only the remaining journey of affected trains is adjusted locally into a queue-and-wait, avoiding global recomputation timeouts and memory blowups</span></li></ul>
+          <div class="mo-meta"><span class="mo-time"><span class="zh">3 天前</span><span class="en">3 days ago</span></span></div>
+          <div class="mo-social">
+            <div class="mo-likes"><span class="heart">&#9825;</span><span class="zh">多智能体路径规划、SIPP 算法、BFS 反向搜索、优先级调度、基于时空的 MCP 重规划</span><span class="en">multi-agent path finding, SIPP, reverse BFS, priority scheduling, space-time MCP replanning</span></div>
+          </div>
+        </div>
+      </article>
+  </div>
+
+  <div class="mo-foot">
+  </div>
+</div>
+
+<template id="tpl-acts">
+  <div class="mo-acts">
+    <button type="button" class="mo-act like"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20S4.8 15.3 4.8 10.4A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7.2 2.4C19.2 15.3 12 20 12 20z"/></svg><span class="l-on"><span class="zh">赞</span><span class="en">Like</span></span><span class="l-off"><span class="zh">取消</span><span class="en">Unlike</span></span></button>
+    <button type="button" class="mo-act cmt"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 5h15v11h-11l-4 3.5z"/></svg><span class="zh">评论</span><span class="en">Comment</span></button>
+  </div>
+  <button type="button" class="mo-dots" aria-label="more">&#8226;&#8226;</button>
+</template>
+<template id="tpl-cmtbox">
+  <div class="mo-cmtbox" hidden>
+    <input class="mo-in" type="text" maxlength="60" data-zh="说点什么…" data-en="Say something…">
+    <button type="button" class="mo-send"><span class="zh">发送</span><span class="en">Send</span></button>
+  </div>
+</template>
+<span id="tpl-you" hidden><span class="zh">你</span><span class="en">You</span></span>
+<span id="tpl-thanks" hidden><span class="zh">蟹蟹你</span><span class="en">Thanks, you</span></span>
+
+<div id="lightbox" hidden><div class="lb-inner"></div></div>
+</div>
+
+<script>
+(function(){
+  var page = document.getElementById('page');
+  var langBtns = page.querySelectorAll('.lang button');
+  var tabs = page.querySelectorAll('.editor .tab');
+  var docs = page.querySelectorAll('.doc');
+  var nodes = page.querySelectorAll('#tree .node');
+  var covers = page.querySelectorAll('.cover');
+  var pblocks = page.querySelectorAll('.pblock');
+  var propsBlocks = page.querySelectorAll('.props-block');
+  var propsName = document.getElementById('props-name');
+  var nowTitle = document.getElementById('now-title');
+  var nowProg = document.getElementById('now-prog');
+  var thumb = document.getElementById('sc-thumb');
+  var statusPos = document.getElementById('status-pos');
+  var fileNames = [
+    document.querySelector('#tree .node[data-p="0"] span:last-child').innerHTML,
+    document.querySelector('#tree .node[data-p="1"] span:last-child').innerHTML,
+    document.querySelector('#tree .node[data-p="2"] span:last-child').innerHTML
+  ];
+  var readmeName = document.querySelector('#tree .node[data-tab="readme"].lvl2 span:last-child').innerHTML;
+  var skillsName = document.querySelector('#tree .node[data-tab="skills"].lvl2 span:last-child').innerHTML;
+  var compName = document.querySelector('#tree .node[data-tab="comp"].lvl2 span:last-child').innerHTML;
+  var state = {tab:'readme', p:0};
+
+  function setLang(l){
+    page.setAttribute('data-lang', l);
+    document.documentElement.lang = (l === 'en') ? 'en' : 'zh-CN';
+    langBtns.forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.set === l)); });
+    try { localStorage.setItem('bh-lang', l); } catch(e){}
+  }
+  langBtns.forEach(function(b){ b.addEventListener('click', function(){ setLang(b.dataset.set); }); });
+
+  function showProps(sel, nameHtml){
+    propsBlocks.forEach(function(b){ b.hidden = (b.dataset.sel !== sel); });
+    propsName.innerHTML = nameHtml;
+  }
+
+  function render(){
+    tabs.forEach(function(t){ t.setAttribute('aria-selected', String(t.dataset.tab === state.tab && (t.dataset.p === undefined || Number(t.dataset.p) === state.p))); });
+    docs.forEach(function(d){ d.hidden = (d.id !== 'doc-' + state.tab); });
+    nodes.forEach(function(n){
+      var on = n.dataset.tab === state.tab && (n.dataset.p === undefined || Number(n.dataset.p) === state.p) && n.classList.contains('lvl2');
+      n.classList.toggle('active', on);
+    });
+    covers.forEach(function(c){
+      var d = ((Number(c.dataset.p) - state.p) % 3 + 3) % 3;
+      c.classList.remove('pos-0','pos-m1','pos-p1');
+      c.classList.add(d === 0 ? 'pos-0' : (d === 1 ? 'pos-p1' : 'pos-m1'));
+    });
+    pblocks.forEach(function(b){ b.hidden = (Number(b.dataset.p) !== state.p); });
+    thumb.style.left = (state.p * 33.3) + '%';
+    nowProg.style.width = ((state.p + 1) * 33.3) + '%';
+    statusPos.textContent = (state.p + 1) + ' / 3';
+    if (state.tab === 'projects'){ showProps('p' + state.p, fileNames[state.p]); nowTitle.innerHTML = fileNames[state.p]; }
+    else if (state.tab === 'skills'){ showProps('skills', skillsName); nowTitle.innerHTML = skillsName; }
+    else if (state.tab === 'comp'){ showProps('comp', compName); nowTitle.innerHTML = compName; }
+    else { showProps('readme', readmeName); nowTitle.innerHTML = readmeName; }
+    var h = state.tab === 'projects' ? '#p' + (state.p + 1) : '#' + state.tab;
+    if (location.hash !== h) history.replaceState(null, '', h);
+  }
+  function go(tab, p){
+    state.tab = tab;
+    if (p !== undefined) state.p = ((p % 3) + 3) % 3;
+    render();
+  }
+  tabs.forEach(function(t){ t.addEventListener('click', function(){ go(t.dataset.tab, t.dataset.p !== undefined ? Number(t.dataset.p) : undefined); }); });
+  nodes.forEach(function(n){
+    if (!n.dataset.tab) return;
+    n.setAttribute('tabindex', '0');
+    var h = function(){ go(n.dataset.tab, n.dataset.p !== undefined ? Number(n.dataset.p) : undefined); };
+    n.addEventListener('click', h);
+    n.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); h(); } });
+  });
+  covers.forEach(function(c){
+    var h = function(){ go('projects', Number(c.dataset.p)); };
+    c.addEventListener('click', h);
+    c.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); h(); } });
+  });
+  document.getElementById('btn-prev').addEventListener('click', function(){ go('projects', state.tab === 'projects' ? state.p - 1 : state.p); });
+  document.getElementById('btn-next').addEventListener('click', function(){ go('projects', state.tab === 'projects' ? state.p + 1 : state.p); });
+  document.getElementById('sc-prev').addEventListener('click', function(){ go('projects', state.p - 1); });
+  document.getElementById('sc-next').addEventListener('click', function(){ go('projects', state.p + 1); });
+  document.getElementById('btn-run').addEventListener('click', function(){ go('projects'); });
+  document.addEventListener('keydown', function(e){
+    if (e.target.tagName === 'INPUT') return;
+    if (state.tab !== 'projects') return;
+    if (e.key === 'ArrowLeft') go('projects', state.p - 1);
+    if (e.key === 'ArrowRight') go('projects', state.p + 1);
+  });
+
+  // ---- mobile Moments feed: reuse the figures and tables from the desktop view ----
+  (function(){
+    var srcFigs = {
+      p0: ['.cover[data-p="0"] svg', '.pblock[data-p="0"] .figs figure svg'],
+      p1: ['.cover[data-p="1"] svg', '.pblock[data-p="1"] .figs figure svg'],
+      p2: ['.cover[data-p="2"] svg', '.pblock[data-p="2"] .figs figure svg']
+    };
+    var srcMore = {
+      edu: '#doc-readme .edu',
+      p0: '.pblock[data-p="0"] table.grid',
+      p1: '.pblock[data-p="1"] table.grid',
+      p2: '.pblock[data-p="2"] table.grid',
+      comp: '#doc-comp .cards',
+      skills: '#doc-skills .sec'
+    };
+    page.querySelectorAll('.mo-more[data-more]').forEach(function(m){
+      var src = page.querySelector(srcMore[m.dataset.more]);
+      if (src) m.appendChild(src.cloneNode(true));
+    });
+    page.querySelectorAll('.mo-expand').forEach(function(b){
+      var more = b.previousElementSibling;
+      var openLabel = b.innerHTML;
+      var closeLabel = '<span class="zh">收起</span><span class="en">Collapse</span>';
+      b.dataset.open = '0';
+      b.addEventListener('click', function(){
+        var isOpen = b.dataset.open === '1';
+        more.hidden = isOpen;
+        b.dataset.open = isOpen ? '0' : '1';
+        b.innerHTML = isOpen ? openLabel : closeLabel;
+      });
+    });
+    var lb = document.getElementById('lightbox');
+    var lbi = lb.querySelector('.lb-inner');
+    function closeLb(){ lb.classList.remove('on'); lb.hidden = true; }
+    page.querySelectorAll('.mo-grid').forEach(function(g){
+      g.addEventListener('click', function(e){
+        var fig = e.target.closest ? e.target.closest('figure') : null;
+        if (!fig) return;
+        lbi.innerHTML = '';
+        lbi.appendChild(fig.querySelector('svg').cloneNode(true));
+        lb.hidden = false;
+        lb.classList.add('on');
+      });
+    });
+    lb.addEventListener('click', closeLb);
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && lb.classList.contains('on')) closeLb();
+    });
+  })();
+
+  // manual interface switch (the media query picks a default; this overrides it)
+  page.querySelectorAll('[data-view-to]').forEach(function(b){
+    b.addEventListener('click', function(){
+      page.setAttribute('data-view', b.dataset.viewTo);
+      window.scrollTo(0, 0);
+    });
+  });
+
+  // bottom panel: output / error list
+  var btabs = page.querySelectorAll('#btabs .tab');
+  var bpanes = page.querySelectorAll('[data-bpane]');
+  btabs.forEach(function(b){
+    b.addEventListener('click', function(){
+      btabs.forEach(function(x){ x.setAttribute('aria-selected', String(x === b)); });
+      bpanes.forEach(function(pn){ pn.hidden = (pn.dataset.bpane !== b.dataset.btab); });
+    });
+  });
+
+  // search: filter table rows / cards in the visible document
+  var search = document.getElementById('search');
+  search.addEventListener('input', function(){
+    var q = search.value.trim().toLowerCase();
+    page.querySelectorAll('.searchable').forEach(function(el){
+      el.hidden = q !== '' && el.textContent.toLowerCase().indexOf(q) === -1;
+    });
+  });
+
+  // initial state
+  var saved = null;
+  try { saved = localStorage.getItem('bh-lang'); } catch(e){}
+  if (saved === 'en' || saved === 'zh') setLang(saved);
+  else if (/^en/i.test(navigator.language || '')) setLang('en');
+  else setLang('zh');
+  var m = /^#(p([123])|comp|skills|readme)$/.exec(location.hash || '');
+  if (m && m[2]) go('projects', Number(m[2]) - 1);
+  else if (m) go(m[1]);
+  else render();
+  window.addEventListener('hashchange', function(){
+    var m = /^#(p([123])|comp|skills|readme)$/.exec(location.hash || '');
+    if (m && m[2]) go('projects', Number(m[2]) - 1);
+    else if (m) go(m[1]);
+  });
+
+  // ---- Moments: like / comment (interaction only, cleared on reload) ----
+  (function(){
+    var tplActs = document.getElementById('tpl-acts');
+    var tplBox = document.getElementById('tpl-cmtbox');
+    var youEl = document.getElementById('tpl-you');
+    var thxEl = document.getElementById('tpl-thanks');
+    if (!tplActs || !tplBox || !youEl) return;
+    var youHtml = youEl.innerHTML;
+    var thxHtml = thxEl ? thxEl.innerHTML : youHtml;
+    var openActs = null;
+
+
+    function closeActs(){ if (openActs){ openActs.classList.remove('on'); openActs = null; } }
+    document.addEventListener('click', closeActs);
+
+    page.querySelectorAll('#moments .mo-post').forEach(function(post){
+      var body = post.querySelector('.mo-body');
+      var meta = post.querySelector('.mo-meta');
+      if (!body || !meta) return;
+      meta.appendChild(tplActs.content.cloneNode(true));
+      var acts = meta.querySelector('.mo-acts');
+      var dots = meta.querySelector('.mo-dots');
+
+      var social = body.querySelector('.mo-social');
+      if (!social){
+        social = document.createElement('div');
+        social.className = 'mo-social';
+        social.hidden = true;
+        body.appendChild(social);
+      }
+      var likes = social.querySelector('.mo-likes');
+      if (!likes){
+        likes = document.createElement('div');
+        likes.className = 'mo-likes';
+        likes.hidden = true;
+        likes.innerHTML = '<span class="heart">&#9825;</span>';
+        social.insertBefore(likes, social.firstChild);
+      }
+      social.appendChild(tplBox.content.cloneNode(true));
+      var box = social.querySelector('.mo-cmtbox');
+      var input = box.querySelector('.mo-in');
+      var send = box.querySelector('.mo-send');
+      var likeBtn = acts.querySelector('.like');
+      var cmtBtn = acts.querySelector('.cmt');
+      var me = null;
+
+      function txt(){
+        return likes.textContent.replace(/[\u2661\s]/g, '');
+      }
+
+      dots.addEventListener('click', function(e){
+        e.stopPropagation();
+        var on = acts.classList.contains('on');
+        closeActs();
+        if (!on){ acts.classList.add('on'); openActs = acts; }
+      });
+      acts.addEventListener('click', function(e){ e.stopPropagation(); });
+
+      likeBtn.addEventListener('click', function(){
+        if (me){
+          me.parentNode.removeChild(me);
+          me = null;
+          likeBtn.classList.remove('on');
+          if (!txt()) likes.hidden = true;
+        } else {
+          var had = txt() !== '';
+          me = document.createElement('span');
+          me.className = 'mo-me';
+          me.innerHTML = (had ? '<span class="zh">\u3001</span><span class="en">, </span>' : '') + thxHtml;
+          likes.appendChild(me);
+          likes.hidden = false;
+          social.hidden = false;
+          likeBtn.classList.add('on');
+        }
+        closeActs();
+      });
+
+      cmtBtn.addEventListener('click', function(){
+        social.hidden = false;
+        box.hidden = false;
+        closeActs();
+        input.focus();
+      });
+
+      function addCmt(){
+        var v = input.value.trim();
+        if (!v) return;
+        var d = document.createElement('div');
+        d.className = 'mo-cmt';
+        var b = document.createElement('b');
+        b.innerHTML = thxHtml + '<span class="zh">\uff1a</span><span class="en">: </span>';
+        d.appendChild(b);
+        d.appendChild(document.createTextNode(v));
+        social.insertBefore(d, box);
+        input.value = '';
+        box.hidden = true;
+      }
+      send.addEventListener('click', addCmt);
+      input.addEventListener('keydown', function(e){
+        if (e.key === 'Enter'){ e.preventDefault(); addCmt(); }
+      });
+    });
+
+    page.querySelectorAll('.mo-cover-info .zh, .mo-cover-info .en').forEach(function(s){
+      s.innerHTML = s.innerHTML.replace(/\s*\|\s*/, '<br>');
+    });
+
+    function syncPh(){
+      var en = page.getAttribute('data-lang') === 'en';
+      page.querySelectorAll('.mo-in').forEach(function(i){
+        i.placeholder = en ? i.dataset.en : i.dataset.zh;
+      });
+    }
+    page.querySelectorAll('.lang button').forEach(function(b){ b.addEventListener('click', syncPh); });
+    syncPh();
+  })();
+})();
+</script>
+
+</body>
+</html>
