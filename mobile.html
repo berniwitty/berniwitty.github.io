@@ -593,7 +593,7 @@
                 <text class="lbl en" x="238" y="213" text-anchor="middle">zero-shot</text>
                 <text class="lbl en" x="300" y="199" text-anchor="middle">mine</text>
               </svg>
-              <div class="cap"><span class="zh">官方单轮测试集 1,459 题，严格成功率（%）</span><span class="en">Official single-turn test set, 1,459 tasks, strict success (%)</span></div>
+              <div class="cap"><span class="zh">同测试集严格成功率（%）</span><span class="en">Strict success rate on the same test set (%)</span></div>
             </div>
 
             <!-- cover 2: grouped bars -->
@@ -601,8 +601,8 @@
               <svg class="ink" viewBox="0 0 360 225" role="img" aria-label="三个基准上的准确率：GSM8K 未训练 57.8、GRPO 77.2、在线蒸馏 82.3；MATH-500 42.4、64.6、68.0；OlympiadBench 17.4、30.7、34.9">
                 <path d="M22 182 H342"/>
                 <rect class="white" x="30" y="14" width="12" height="12"/><text class="lbl zh" x="47" y="25">未训练</text><text class="lbl en" x="47" y="25">base</text>
-                <rect class="hatched" x="110" y="14" width="12" height="12"/><text class="lbl zh" x="127" y="25">GRPO 250 步</text><text class="lbl en" x="127" y="25">GRPO, 250 steps</text>
-                <rect class="solid" x="230" y="14" width="12" height="12"/><text class="lbl zh" x="247" y="25">在线蒸馏 350 步</text><text class="lbl en" x="247" y="25">OPD, 350 steps</text>
+                <rect class="hatched" x="110" y="14" width="12" height="12"/><text class="lbl zh" x="127" y="25">GRPO</text><text class="lbl en" x="127" y="25">GRPO</text>
+                <rect class="solid" x="230" y="14" width="12" height="12"/><text class="lbl zh" x="247" y="25">OPD</text><text class="lbl en" x="247" y="25">OPD</text>
                 <rect class="white" x="40" y="88.9" width="24" height="93.1"/>
                 <rect class="hatched" x="68" y="57.6" width="24" height="124.4"/>
                 <rect class="solid" x="96" y="49.4" width="24" height="132.6"/>
@@ -627,12 +627,12 @@
                 <text class="lbl zh" x="180" y="218" text-anchor="middle">难度从左到右递增 · 贪心解码准确率（%）</text>
                 <text class="lbl en" x="180" y="218" text-anchor="middle">difficulty increases left to right · greedy accuracy (%)</text>
               </svg>
-              <div class="cap"><span class="zh">等活跃算力终点；三个基准全量测试集共 2,493 题；蒸馏臂为「GRPO 教师」那一条</span><span class="en">Endpoints at matched active compute; full test sets, 2,493 problems; the OPD arm shown uses the GRPO-trained teacher</span></div>
+              <div class="cap"><span class="zh">等算力对比；GSM8K / MATH-500 / Olympiad-Bench 全量 2493 题</span><span class="en">Matched compute; full GSM8K / MATH-500 / OlympiadBench sets, 2,493 problems</span></div>
             </div>
 
             <!-- cover 3: tool loop -->
             <div class="cover" data-p="2" role="button" tabindex="0">
-              <svg class="ink" viewBox="0 0 360 225" role="img" aria-label="循环：模型写代码，沙箱执行，读回输出，继续推理，最多 16 轮">
+              <svg class="ink" viewBox="0 0 360 225" role="img" aria-label="循环：模型写代码，沙箱执行，读回输出，继续推理">
                 <g transform="translate(20 40)">
                   <rect class="white" x="22" y="44" width="40" height="40" rx="6"/>
                   <circle cx="35" cy="60" r="3"/><circle cx="49" cy="60" r="3"/><path class="thin" d="M34 72 q8 5 16 0"/>
@@ -650,8 +650,8 @@
                   <text class="lbl zh" x="268" y="88" text-anchor="middle">沙箱真跑</text>
                   <text class="lbl en" x="268" y="88" text-anchor="middle">sandbox</text>
                   <path class="arrow" d="M268 98 V120 H42 V90"/>
-                  <text class="lbl zh" x="155" y="134" text-anchor="middle">读回输出继续推理 · 一条轨迹最多 16 轮</text>
-                  <text class="lbl en" x="155" y="134" text-anchor="middle">read the output back and continue · up to 16 turns</text>
+                  <text class="lbl zh" x="155" y="134" text-anchor="middle">读回输出继续推理</text>
+                  <text class="lbl en" x="155" y="134" text-anchor="middle">read the output back and continue</text>
                   <text class="mono" x="176" y="114">out: 42</text>
                 </g>
                 <text class="big" x="180" y="30" text-anchor="middle">AIME +16.3</text>
@@ -706,7 +706,7 @@
                 <text class="lbl en" x="215" y="118" text-anchor="middle">Comparator</text>
                 <text class="lbl en" x="300" y="118" text-anchor="middle">Verifier</text>
               </svg>
-              <figcaption><b><span class="zh">先造一个教师</span><span class="en">First, build a teacher</span></b><span class="zh">Qwen3-8B 独自做多轮任务只有 12.0%。四个角色分工后到 27.3%，这套系统随后专门用来产数据。</span><span class="en">Qwen3-8B alone reaches 12.0% on multi-turn tasks. Split into four roles it reaches 27.3%, and that system then exists to produce data.</span></figcaption>
+              <figcaption><b><span class="zh">先造一个教师</span><span class="en">First, build a teacher</span></b><span class="zh">单模型在多轮个性化场景只有 12.0%；四角色多智能体分工后到 27.3%，这套系统随后用来采样训练数据。</span><span class="en">The single model reaches only 12.0% in multi-turn personalised scenarios; the four-role multi-agent system reaches 27.3% and is then used to sample training data.</span></figcaption>
             </figure>
             <figure>
               <svg class="ink" viewBox="-15 0 290 240" role="img" aria-label="数据飞轮：教师采样、环境判分、过滤改写、学生训练，循环">
@@ -729,7 +729,7 @@
                 <text class="mid zh" x="130" y="126" text-anchor="middle">再转一圈</text>
                 <text class="mid en" x="130" y="126" text-anchor="middle">and again</text>
               </svg>
-              <figcaption><b><span class="zh">再让数据自己转起来</span><span class="en">Then let the data spin</span></b><span class="zh">成交结果直接当标签。两圈之后单轮成功率 8.3% 到 26.0%；放开过滤、加大 LoRA 容量后到 45.5%。</span><span class="en">The purchase outcome is the label. Two turns take single-turn success from 8.3% to 26.0%; relaxed filtering and more LoRA capacity take it to 45.5%.</span></figcaption>
+              <figcaption><b><span class="zh">再让数据自己转起来</span><span class="en">Then let the data spin</span></b><span class="zh">环境判定器验证的成功轨迹直接当训练数据：第一轮严格成功率 8.3% 到 26.0%；引入 Qwen3-235B 强教师、两轮数据飞轮与 LoRA 作用层扩容后到 45.5%。</span><span class="en">Successful trajectories verified by the environment judge become training data: the first round lifts strict success from 8.3% to 26.0%; a Qwen3-235B teacher, two flywheel rounds and wider LoRA target layers bring it to 45.5%.</span></figcaption>
             </figure>
           </div>
         </div>
@@ -737,7 +737,7 @@
         <!-- project 2 -->
         <div class="pblock" data-p="1" hidden>
           <p class="kicker"><span class="zh">数学推理模型后训练 · 强化学习 vs 在线蒸馏</span><span class="en">Math-reasoning post-training · RL vs. on-policy distillation</span></p>
-          <h2><span class="zh">等算力下，在线蒸馏训 50 步就超过了 GRPO 跑满 250 步的终点；三个基准都赢，比未训练的学生高 17 到 26 个点。</span><span class="en">At matched compute, on-policy distillation passes GRPO's 250-step endpoint by step 50, wins on all three benchmarks, and lifts the student by 17 to 26 pts.</span></h2>
+          <h2><span class="zh">同一学生、同一数据、同一评测集，等算力下 OPD 在三个基准上都超过 GRPO，比 Qwen3-1.7B-Base 高 17-26 个百分点。</span><span class="en">Same student, same data, same evaluation sets: at matched compute OPD beats GRPO on all three benchmarks, 17 to 26 points above Qwen3-1.7B-Base.</span></h2>
           <p class="stack"><span class="zh">RLVR · GRPO · OPD · Reverse KL · verl · vLLM · FSDP · Ray · PyTorch</span><span class="en">RLVR · GRPO · OPD · Reverse KL · verl · vLLM · FSDP · Ray · PyTorch</span></p>
           <p class="intro"><span class="zh">在同一 Qwen3-1.7B-Base、同一 DAPO-Math-17K 数据和同一评测集上，对比 <b>GRPO 与 OPD</b> 效果，并研究<b>教师模型训练路径</b>对蒸馏效果的影响。</span><span class="en">On the same Qwen3-1.7B-Base, the same DAPO-Math-17K data and the same evaluation sets, compares <b>GRPO against OPD</b> and studies how the <b>teacher's training route</b> affects distillation.</span></p>
           <table class="grid">
@@ -766,7 +766,7 @@
                 <text class="lbl zh" x="184" y="114" text-anchor="middle">同一条回答的 token</text>
                 <text class="lbl en" x="184" y="114" text-anchor="middle">tokens of one answer</text>
               </svg>
-              <figcaption><b><span class="zh">为什么快：监督信号的密度</span><span class="en">Why it is faster: supervision density</span></b><span class="zh">在线蒸馏在学生自己采样的每个 token 上都有教师的反向 KL 信号；GRPO 只有判分器给整条回答的一个对错标量，摊给全部 token。</span><span class="en">OPD gets a reverse-KL signal from the teacher on every token the student samples; GRPO gets one right-or-wrong scalar per answer, spread over all tokens.</span></figcaption>
+              <figcaption><b><span class="zh">为什么快：监督信号的密度</span><span class="en">Why it is faster: supervision density</span></b><span class="zh">OPD 在学生自采样轨迹上有教师逐 token 的 Reverse KL 连续监督；GRPO 只有 math-verifier 给整条回答的一个 0/1 奖励。</span><span class="en">OPD gets dense per-token reverse-KL supervision from the teacher on the student's own trajectories; GRPO gets a single 0/1 reward per answer from math-verifier.</span></figcaption>
             </figure>
             <figure>
               <svg class="ink" viewBox="0 0 320 130" role="img" aria-label="同源双教师的蒸馏差距随难度增大：GSM8K −1.2、MATH-500 +2.8、OlympiadBench +5.8 个百分点">
@@ -780,15 +780,15 @@
                 <circle cx="284" cy="8" r="5"/><path class="thin" d="M284 13 V24 M284 17 L278 22 M284 17 L290 21 M284 24 L280 32 M284 24 L289 32"/>
                 <path class="dash" d="M20 122 H300"/>
               </svg>
-              <figcaption><b><span class="zh">教师怎么选：路径比分数更说明问题</span><span class="en">Choosing a teacher: lineage over score</span></b><span class="zh">两个教师同出自 Qwen3-4B-Base、分数只差 2.2 个点。和学生一样只做过数学强化学习的那个，蒸出的学生在难题上更强，差距随难度递增。</span><span class="en">Both teachers come from Qwen3-4B-Base and differ by 2.2 pts. The one that, like the student, only went through math RL distills a stronger student on hard problems, and the gap grows with difficulty.</span></figcaption>
+              <figcaption><b><span class="zh">教师怎么选：路径比分数更说明问题</span><span class="en">Choosing a teacher: lineage over score</span></b><span class="zh">两个教师同出自 Qwen3-4B-Base、准确率只差 2.2 个百分点。与学生路径一致、直接在同域数学数据上做 GRPO 的那个，蒸出的学生准确率更高，差距随难度递增。</span><span class="en">Both teachers come from Qwen3-4B-Base and differ by only 2.2 points. The one whose route matches the student's, GRPO directly on in-domain math data, distils a more accurate student, and the gap grows with difficulty.</span></figcaption>
             </figure>
           </div>
         </div>
 
         <!-- project 3 -->
         <div class="pblock" data-p="2" hidden>
-          <p class="kicker"><span class="zh">多轮工具调用智能体 · Agentic RL 训练与评测 · 2026.07</span><span class="en">Multi-turn tool-use agent · agentic RL training &amp; evaluation · Jul 2026</span></p>
-          <h2><span class="zh">让模型在推理中途自己写 Python、沙箱真跑、读回结果再想，最多 16 轮。只用全量 1.4% 的训练量，AIME 共提升 16.3 个点。</span><span class="en">The model writes Python mid-reasoning, a sandbox runs it, and it reads the output back, up to 16 turns. With 1.4% of the full training volume, AIME rose 16.3 pts.</span></h2>
+          <p class="kicker"><span class="zh">数学推理 · 多轮工具调用智能体 · 强化学习训练与评测</span><span class="en">Math reasoning · multi-turn tool-use agent · RL training &amp; evaluation</span></p>
+          <h2><span class="zh">模型在推理中途自主写 Python，沙箱执行后读回结果继续推理。轻量化 RLVR 训练后，AIME 平均得分较 SFT 基线提升 16.3 个百分点。</span><span class="en">The model writes Python mid-reasoning, the sandbox runs it and the result is read back. After lightweight RLVR training the average AIME score is 16.3 points above the SFT baseline.</span></h2>
           <p class="stack"><span class="zh">技术栈：GRPO、DAPO、RLVR、SFT、verl、vLLM、Ray、FSDP、PyTorch</span><span class="en">Stack: GRPO, DAPO, RLVR, SFT, verl, vLLM, Ray, FSDP, PyTorch</span></p>
           <p class="intro"><span class="zh">模型在数学推理过程中自主生成 Python 代码，经<b>沙箱执行</b>并读回结果后继续推理，在<b>轨迹级最终答案奖励</b>下学习工具调用策略。</span><span class="en">The model writes Python code mid-reasoning, reads the result back after <b>sandbox execution</b> and keeps reasoning, learning a tool-use policy under a <b>trajectory-level final-answer reward</b>.</span></p>
           <table class="grid">
@@ -811,7 +811,7 @@
                 <text class="lbl zh" x="224" y="94">教师 Qwen3-Coder-30B</text><text class="lbl en" x="224" y="94">teacher: Qwen3-Coder-30B</text>
                 <text class="lbl" x="224" y="112">PRM: ReasonFlux-PRM</text>
               </svg>
-              <figcaption><b><span class="zh">先教会它用工具</span><span class="en">First, teach it to use tools</span></b><span class="zh">教师在沙箱里真跑代码、读回输出继续推理，产出 6K 条轨迹；过程奖励模型打分排序留 3K 条，全参微调 Qwen3-4B 得到强化学习的起点。</span><span class="en">The teacher really runs code in the sandbox and reads the output back, producing 6K trajectories; a process reward model ranks them down to 3K, and full fine-tuning of Qwen3-4B gives the RL starting point.</span></figcaption>
+              <figcaption><b><span class="zh">先教会它用工具</span><span class="en">First, teach it to use tools</span></b><span class="zh">Qwen3-Coder-30B 作为教师在沙箱里真实交互，产出 6K 条轨迹；ReasonFlux-PRM 筛出 3K 条做 SFT，工具调用作答占比由 15% 提升至 73%。</span><span class="en">Qwen3-Coder-30B interacts with a real sandbox as teacher, producing 6K trajectories; ReasonFlux-PRM keeps 3K for SFT, raising the share of tool-using answers from 15% to 73%.</span></figcaption>
             </figure>
             <figure>
               <svg class="ink" viewBox="0 0 320 130" role="img" aria-label="分层采样：题库中代码题占 14%，训练集里提到 42%">
@@ -835,7 +835,7 @@
                 <text class="lbl zh" x="272" y="96">奖励来自</text><text class="lbl zh" x="272" y="110">单元测试</text>
                 <text class="lbl en" x="272" y="96">reward =</text><text class="lbl en" x="272" y="110">unit tests</text>
               </svg>
-              <figcaption><b><span class="zh">再让工具质量进入奖励</span><span class="en">Then put tool quality into the reward</span></b><span class="zh">数学题的奖励只看最终答案，工具用没用不进奖励；代码题的奖励由沙箱单元测试直接决定。代码题在题库里只占 14%，随机采样三成批次抽不到，分层提到 42% 让它稳定进入每步更新。</span><span class="en">Math rewards check only the final answer, so tool use is invisible to them; code rewards come straight from sandbox unit tests. Code is 14% of the pool and missing from three in ten random batches, so stratifying it to 42% keeps it in every update.</span></figcaption>
+              <figcaption><b><span class="zh">再让沙箱奖励进入训练</span><span class="en">Then bring the sandbox reward into training</span></b><span class="zh">从 30K 道数学 / 代码 / 科学混合题中分层采样 600 道，代码题占比由 14% 提至 42%，覆盖沙箱奖励链路。</span><span class="en">600 problems stratified-sampled from a 30K math / code / science pool, lifting code problems from 14% to 42% to cover the sandbox reward path.</span></figcaption>
             </figure>
           </div>
         </div>
@@ -880,24 +880,23 @@
           </div>
           <div class="props-block" data-sel="p0" hidden><table class="props"><tr><th><span class="zh">基座模型</span><span class="en">Base model</span></th><td><span class="zh">Qwen3-8B</span><span class="en">Qwen3-8B</span></td></tr>
 <tr><th><span class="zh">基准</span><span class="en">Benchmark</span></th><td><span class="zh">ShopSimulator</span><span class="en">ShopSimulator</span></td></tr>
-<tr><th><span class="zh">指标</span><span class="en">Metric</span></th><td><span class="zh">严格成功率（四项全对）</span><span class="en">strict success (all four attributes)</span></td></tr>
-<tr><th><span class="zh">结果</span><span class="en">Result</span></th><td><span class="zh">45.5%，GPT-5 零样本 40.8%</span><span class="en">45.5% vs GPT-5 zero-shot 40.8%</span></td></tr>
-<tr><th><span class="zh">主方法</span><span class="en">Main method</span></th><td><span class="zh">多智能体教师 + 数据飞轮 + LoRA SFT</span><span class="en">multi-agent teacher + data flywheel + LoRA SFT</span></td></tr>
-<tr><th><span class="zh">对照路线</span><span class="en">Compared against</span></th><td><span class="zh">决策点级 DPO、GiGPO</span><span class="en">decision-level DPO, GiGPO</span></td></tr>
-<tr><th><span class="zh">框架</span><span class="en">Frameworks</span></th><td><span class="zh">LLaMA-Factory、verl-agent、vLLM、LangGraph</span><span class="en">LLaMA-Factory, verl-agent, vLLM, LangGraph</span></td></tr></table></div>
+<tr><th><span class="zh">指标</span><span class="en">Metric</span></th><td><span class="zh">严格成功率</span><span class="en">strict success rate</span></td></tr>
+<tr><th><span class="zh">结果</span><span class="en">Result</span></th><td><span class="zh">45.5%，GPT-5 零样本 40.8%</span><span class="en">45.5%, GPT-5 zero-shot 40.8%</span></td></tr>
+<tr><th><span class="zh">主方法</span><span class="en">Main method</span></th><td><span class="zh">多智能体系统 + 拒绝采样 + LoRA SFT + 数据飞轮</span><span class="en">multi-agent system + rejection sampling + LoRA SFT + data flywheel</span></td></tr>
+<tr><th><span class="zh">对照方案</span><span class="en">Other options tested</span></th><td><span class="zh">DPO / GiGPO</span><span class="en">DPO / GiGPO</span></td></tr>
+<tr><th><span class="zh">框架</span><span class="en">Frameworks</span></th><td><span class="zh">LLaMA-Factory、verl-agent、vLLM</span><span class="en">LLaMA-Factory, verl-agent, vLLM</span></td></tr></table></div>
           <div class="props-block" data-sel="p1" hidden><table class="props"><tr><th><span class="zh">学生</span><span class="en">Student</span></th><td><span class="zh">Qwen3-1.7B-Base</span><span class="en">Qwen3-1.7B-Base</span></td></tr>
-<tr><th><span class="zh">教师</span><span class="en">Teachers</span></th><td><span class="zh">两个 Qwen3-4B（同源，不同后训练路径）</span><span class="en">two Qwen3-4B (same origin, different post-training)</span></td></tr>
+<tr><th><span class="zh">教师</span><span class="en">Teachers</span></th><td><span class="zh">两个同出自 Qwen3-4B-Base 的教师，后训练路径不同</span><span class="en">two from Qwen3-4B-Base, different post-training routes</span></td></tr>
 <tr><th><span class="zh">训练集</span><span class="en">Training set</span></th><td><span class="zh">DAPO-Math-17K</span><span class="en">DAPO-Math-17K</span></td></tr>
-<tr><th><span class="zh">基准</span><span class="en">Benchmarks</span></th><td><span class="zh">GSM8K、MATH-500、OlympiadBench</span><span class="en">GSM8K, MATH-500, OlympiadBench</span></td></tr>
-<tr><th><span class="zh">结果</span><span class="en">Result</span></th><td><span class="zh">OPD 50 步 &gt; GRPO 250 步终点</span><span class="en">OPD at step 50 &gt; GRPO at step 250</span></td></tr>
-<tr><th><span class="zh">算力口径</span><span class="en">Compute</span></th><td><span class="zh">活跃 GPU 小时 8.4 对 8.1</span><span class="en">8.4 vs 8.1 active GPU-hours</span></td></tr>
+<tr><th><span class="zh">基准</span><span class="en">Benchmarks</span></th><td><span class="zh">GSM8K、MATH-500、Olympiad-Bench，全量 2493 题</span><span class="en">GSM8K, MATH-500, OlympiadBench, 2,493 problems</span></td></tr>
+<tr><th><span class="zh">结果</span><span class="en">Result</span></th><td><span class="zh">等算力下 OPD 均高于 GRPO，提升 17-26 个百分点</span><span class="en">OPD beats GRPO at matched compute, +17 to 26 points</span></td></tr>
 <tr><th><span class="zh">框架</span><span class="en">Frameworks</span></th><td><span class="zh">verl、vLLM、FSDP、Ray</span><span class="en">verl, vLLM, FSDP, Ray</span></td></tr></table></div>
-          <div class="props-block" data-sel="p2" hidden><table class="props"><tr><th><span class="zh">起点模型</span><span class="en">Starting model</span></th><td><span class="zh">Qwen3-4B-Instruct-2507（全参 SFT）</span><span class="en">Qwen3-4B-Instruct-2507 (full SFT)</span></td></tr>
-<tr><th><span class="zh">轨迹教师</span><span class="en">Trajectory teacher</span></th><td><span class="zh">Qwen3-Coder-30B</span><span class="en">Qwen3-Coder-30B</span></td></tr>
-<tr><th><span class="zh">数据</span><span class="en">Data</span></th><td><span class="zh">6K → 3K 条轨迹；RL 600 题</span><span class="en">6K → 3K trajectories; 600 RL items</span></td></tr>
-<tr><th><span class="zh">工具</span><span class="en">Tool</span></th><td><span class="zh">Python 沙箱，最多 16 轮</span><span class="en">Python sandbox, up to 16 turns</span></td></tr>
-<tr><th><span class="zh">评测</span><span class="en">Evaluation</span></th><td><span class="zh">AIME2024 / 2025，每题 16 次</span><span class="en">AIME2024 / 2025, 16 runs per problem</span></td></tr>
-<tr><th><span class="zh">结果</span><span class="en">Result</span></th><td><span class="zh">共 +16.3 个百分点</span><span class="en">+16.3 pts in total</span></td></tr>
+          <div class="props-block" data-sel="p2" hidden><table class="props"><tr><th><span class="zh">轨迹教师</span><span class="en">Trajectory teacher</span></th><td><span class="zh">Qwen3-Coder-30B</span><span class="en">Qwen3-Coder-30B</span></td></tr>
+<tr><th><span class="zh">数据</span><span class="en">Data</span></th><td><span class="zh">6K → 3K 条轨迹；RL 600 题</span><span class="en">6K → 3K trajectories; 600 RL problems</span></td></tr>
+<tr><th><span class="zh">工具</span><span class="en">Tool</span></th><td><span class="zh">Python 沙箱</span><span class="en">Python sandbox</span></td></tr>
+<tr><th><span class="zh">评测</span><span class="en">Evaluation</span></th><td><span class="zh">AIME2024 / 2025，240 题 × 4 次采样</span><span class="en">AIME2024 / 2025, 240 problems × 4 samples</span></td></tr>
+<tr><th><span class="zh">结果</span><span class="en">Result</span></th><td><span class="zh">较 SFT 基线提升 16.3 个百分点</span><span class="en">+16.3 points over the SFT baseline</span></td></tr>
+<tr><th><span class="zh">奖励消融</span><span class="en">Reward ablation</span></th><td><span class="zh">沙箱执行成功率 66.2% → 79.0%</span><span class="en">sandbox execution success 66.2% → 79.0%</span></td></tr>
 <tr><th><span class="zh">框架</span><span class="en">Frameworks</span></th><td><span class="zh">verl、vLLM、Ray、FSDP</span><span class="en">verl, vLLM, Ray, FSDP</span></td></tr></table></div>
           <div class="props-block" data-sel="comp" hidden><table class="props"><tr><th><span class="zh">Pacman</span><span class="en">Pacman</span></th><td><span class="zh">排名 11 / 298</span><span class="en">rank 11 / 298</span></td></tr>
 <tr><th><span class="zh">Flatland</span><span class="en">Flatland</span></th><td><span class="zh">排名 14 / 315</span><span class="en">rank 14 / 315</span></td></tr>
@@ -1107,8 +1106,8 @@
           <div class="mo-grid one"><figure><svg class="ink" viewBox="0 0 360 347.5" role="img" aria-label="三个基准上的准确率与监督信号密度"><g transform="translate(0.000,0.000) scale(1.0000)">
                 <path d="M22 182 H342"/>
                 <rect class="white" x="30" y="14" width="12" height="12"/><text class="lbl zh" x="47" y="25">未训练</text><text class="lbl en" x="47" y="25">base</text>
-                <rect class="hatched" x="110" y="14" width="12" height="12"/><text class="lbl zh" x="127" y="25">GRPO 250 步</text><text class="lbl en" x="127" y="25">GRPO, 250 steps</text>
-                <rect class="solid" x="230" y="14" width="12" height="12"/><text class="lbl zh" x="247" y="25">在线蒸馏 350 步</text><text class="lbl en" x="247" y="25">OPD, 350 steps</text>
+                <rect class="hatched" x="110" y="14" width="12" height="12"/><text class="lbl zh" x="127" y="25">GRPO</text><text class="lbl en" x="127" y="25">GRPO</text>
+                <rect class="solid" x="230" y="14" width="12" height="12"/><text class="lbl zh" x="247" y="25">OPD</text><text class="lbl en" x="247" y="25">OPD</text>
                 <rect class="white" x="40" y="88.9" width="24" height="93.1"/>
                 <rect class="hatched" x="68" y="57.6" width="24" height="124.4"/>
                 <rect class="solid" x="96" y="49.4" width="24" height="132.6"/>
@@ -1183,8 +1182,8 @@
                   <text class="lbl zh" x="268" y="88" text-anchor="middle">沙箱真跑</text>
                   <text class="lbl en" x="268" y="88" text-anchor="middle">sandbox</text>
                   <path class="arrow" d="M268 98 V120 H42 V90"/>
-                  <text class="lbl zh" x="155" y="134" text-anchor="middle">读回输出继续推理 · 一条轨迹最多 16 轮</text>
-                  <text class="lbl en" x="155" y="134" text-anchor="middle">read the output back and continue · up to 16 turns</text>
+                  <text class="lbl zh" x="155" y="134" text-anchor="middle">读回输出继续推理</text>
+                  <text class="lbl en" x="155" y="134" text-anchor="middle">read the output back and continue</text>
                   <text class="mono" x="176" y="114">out: 42</text>
                 </g>
                 <text class="big" x="180" y="30" text-anchor="middle">AIME +16.3</text>
