@@ -588,7 +588,6 @@
         <div class="pblock" data-p="2" hidden>
           <h2><span class="zh">数学推理模型后训练：在线蒸馏与多轮工具调用强化学习</span><span class="en">Math-Reasoning Post-Training — On-Policy Distillation &amp; Multi-Turn Tool-Use RL</span></h2>
           <p class="stack"><span class="zh">GRPO、OPD、RLVR、Agentic RL、Tool Use、奖励设计、SFT、verl、vLLM、FSDP、PyTorch</span><span class="en">GRPO, OPD, RLVR, Agentic RL, Tool Use, reward design, SFT, verl, vLLM, FSDP, PyTorch</span></p>
-          <p class="intro"><span class="zh">围绕数学推理后训练的两组实验：在 Qwen3-1.7B-Base 上对比 <b>OPD 与 GRPO</b>；在 Qwen3-4B 上训练模型在推理中自主生成 Python 代码，经<b>沙箱执行</b>读回结果后继续推理。</span><span class="en">Two math-reasoning post-training studies: <b>OPD vs. GRPO</b> on Qwen3-1.7B-Base, and training Qwen3-4B to write Python mid-reasoning, read results back after <b>sandbox execution</b> and keep reasoning.</span></p>
           <table class="grid">
             <thead><tr><th><span class="zh">要点</span><span class="en">Point</span></th><th><span class="zh">说明</span><span class="en">Details</span></th></tr></thead>
             <tbody><tr class="searchable"><td class="pt"><span class="zh">监督信号密度与教师选型</span><span class="en">Supervision density &amp; teacher selection</span></td><td><span class="zh">基于 verl 实现 OPD（教师逐 token Reverse KL 稠密监督）与 GRPO（0/1 答案奖励）。在 GSM8K / MATH-500 / OlympiadBench 共 2493 题上，OPD 优于等算力 GRPO，较 Base 提升 17-26 pp。两个同出自 Qwen3-4B-Base、准确率仅差 2.2 pp 的教师中，<b>后训练路径</b>与学生一致的纯数学 GRPO 教师蒸馏效果更好，题越难优势越大。</span><span class="en">OPD (dense per-token reverse-KL supervision from the teacher) vs. GRPO (0/1 answer reward), both on verl. On GSM8K / MATH-500 / OlympiadBench (2,493 problems), OPD beats GRPO at matched compute, +17-26 pp over Base. Of two Qwen3-4B-Base teachers only 2.2 pp apart, the math-only GRPO teacher whose <b>post-training route</b> matches the student's distils better, more so on harder problems.</span></td></tr>
@@ -625,10 +624,10 @@
         <div class="sechead"><h2><span class="zh">技能 / 竞赛</span><span class="en">SKILLS &amp; COMPETITIONS</span></h2></div>
         <div class="sec">
           <ul class="blist lz" style="padding:0"><li>Agent Harness：Function Calling、MCP、ReAct、LangGraph、上下文工程、Claude Code 与 Skills</li>
-<li>竞赛：Pacman 多智能体对抗 11/298（Planner–Executor 架构、PDDL 规划、Q-learning）<br>Flatland 铁路调度 14/315（多智能体路径规划、优先级调度、故障重规划）</li>
+<li>竞赛：Pacman 多智能体对抗 11/298（Planner–Executor 架构、PDDL 规划、A* 搜索、Q-learning）<br>Flatland 铁路调度 14/315（SIPP 安全区间路径规划、优先级调度、故障重规划）</li>
 <li>其他：微软 Azure AI 技术支持 2 年（Azure OpenAI 等 API 排障，500+ 企业工单，晋升 SME）<br>IELTS 7.5、CET-6 650</li></ul>
           <ul class="blist le" style="padding:0"><li>Agent harness: Function Calling, MCP, ReAct, LangGraph, context engineering, Claude Code &amp; Skills</li>
-<li>Competitions: Pacman multi-agent battle 11/298 (planner–executor, PDDL planning, Q-learning)<br>Flatland railway scheduling 14/315 (multi-agent path finding, priority scheduling, malfunction replanning)</li>
+<li>Competitions: Pacman multi-agent battle 11/298 (planner–executor, PDDL planning, A* search, Q-learning)<br>Flatland railway scheduling 14/315 (SIPP safe-interval path planning, priority scheduling, malfunction replanning)</li>
 <li>Other: Microsoft Azure AI tech support, 2 years (Azure OpenAI API troubleshooting, 500+ enterprise tickets, promoted to SME)<br>IELTS 7.5, CET-6 650</li></ul>
         </div>
       </section>
